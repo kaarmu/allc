@@ -1,13 +1,29 @@
 /*
- * STB-style header library of a string buffer implementation.
+ *  STB-style header library of a string buffer implementation.
  *
- * Provides:
- *   - StrBuf
+ *  Description
+ *  ===========
  *
- * Depends:
- *   - allocator.h
+ *  Provides
+ *  ========
  *
- * Author: Kaj Munhoz Arfvidsson
+ *  StrBuf
+ *
+ *  Options
+ *  =======
+ *
+ *  ALLC_STRBUF_EXPANDED_TAB
+ *
+ *  Library
+ *  =======
+ *
+ *  Dependencies:
+ *    - allocator.h
+ *    - cstr.h
+ *
+ *  Version: 0.0.0
+ *
+ *  Author: Kaj Munhoz Arfvidsson, 2023
  */
 
 #ifndef ALLC_STRBUF_GUARD // {{{1
