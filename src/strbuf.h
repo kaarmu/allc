@@ -142,11 +142,17 @@ void allc_strbuf_join(StrBuf *str_buf, const char *glue, ...);
 #endif // ALLC_STRBUF_GUARD }}}1
 
 #ifdef ALLC_IMPL_STRBUF // {{{1
+#ifdef ALLC_IMPL_DEPENDENCIES
+#   define ALLC_IMPL_ALLOCATOR
+#   define ALLC_IMPL_CSTR
+#endif
 #ifndef ALLC_IMPL_STRBUF_GUARD
 #define ALLC_IMPL_STRBUF_GUARD
 
 #include <string.h>
+
 #include "cstr.h"
+#include "allocator.h"
 
 // Macros {{{2
 
