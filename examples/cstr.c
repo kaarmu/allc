@@ -8,10 +8,10 @@ int main() {
     printf("0 :== %zu\n", allc_cstr_length(""));
     printf("12 :== %zu\n", allc_cstr_length("Hello, world"));
 
-    printf("true :== %s\n", allc_cstr_bool(allc_cstr_is_digit("123")));
-    printf("false :== %s\n", allc_cstr_bool(allc_cstr_is_digit("1s23")));
-    printf("false :== %s\n", allc_cstr_bool(allc_cstr_is_alpha("asd341naAd")));
-    printf("true :== %s\n", allc_cstr_bool(allc_cstr_is_alnum("asd341naAd")));
+    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_digit("123")));
+    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_digit("1s23")));
+    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_alpha("asd341naAd")));
+    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_alnum("asd341naAd")));
 
     printf("0 :== %zu\n", allc_cstr_find_char("", '!'));
     printf("5 :== %zu\n", allc_cstr_find_char("Hello, world", ','));
@@ -22,13 +22,13 @@ int main() {
     printf("12 :== %zu\n", allc_cstr_find_cstr("Hello, world", "word"));
     printf("12 :== %zu\n", allc_cstr_find_cstr("Hello, world", "words"));
 
-    printf("true :== %s\n", allc_cstr_bool(allc_cstr_is_starting_with("Hello, world", "Hell")));
-    printf("false :== %s\n", allc_cstr_bool(allc_cstr_is_starting_with("Hello, world", "Helg")));
-    printf("true :== %s\n", allc_cstr_bool(allc_cstr_is_starting_with("Hello, world", "")));
+    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "Hell")));
+    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "Helg")));
+    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "")));
 
-    printf("true :== %s\n", allc_cstr_bool(allc_cstr_is_starting_with("Hello, world", "ld")));
-    printf("false :== %s\n", allc_cstr_bool(allc_cstr_is_starting_with("Hello, world", "cold")));
-    printf("true :== %s\n", allc_cstr_bool(allc_cstr_is_starting_with("Hello, world", "")));
+    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "ld")));
+    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "cold")));
+    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "")));
 
     char x[13] = "Hello, world";
 

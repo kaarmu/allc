@@ -54,8 +54,11 @@ StrBuf allc_strbuf_new(size_t length, Allocator allocator);
 /* Free the allocated memory owned by the string buffer. */
 void allc_strbuf_del(StrBuf *str_buf);
 
+/* Create a new string buffer that copies from `str_buf`. */
+StrBuf allc_strbuf_copy(StrBuf *str_buf);
+
 /* Create a new string buffer containing a copy of the C-style string `str`. */
-StrBuf allc_strbuf_copy(const char *str, Allocator allocator);
+StrBuf allc_strbuf_copy_cstr(const char *str, Allocator allocator);
 
 /* Increase the string buffer capacity with `n` bytes. */
 void allc_strbuf_grow(StrBuf *str_buf, size_t n);
@@ -66,7 +69,7 @@ void allc_strbuf_ensure_capacity(StrBuf *str_buf, size_t n);
 // String manipulation {{{2
 
 /* Append a copy of the C-style string `str` to the end of the string buffer. */
-void allc_strbuf_append(StrBuf *str_buf, const char *str);
+void allc_strbuf_append_cstr(StrBuf *str_buf, const char *str);
 
 /*
  * Insert a copy of the C-style string `str` at the index `pos` of the string buffer.
@@ -77,7 +80,7 @@ void allc_strbuf_append(StrBuf *str_buf, const char *str);
  * Any existing text starting at `pos` is right shifted by the new strings length using
  * `allc_cstr_rshift`.
  */
-void allc_strbuf_insert(StrBuf *str_buf, int pos, const char *str);
+void allc_strbuf_insert_cstr(StrBuf *str_buf, size_t pos, const char *str);
 
 /*
  * Remove the substring that starts at `from` and continues until, but not including, `to`.
@@ -93,51 +96,6 @@ void allc_strbuf_remove_prefix(StrBuf *str_buf, const char *str);
 
 /* Remove suffix `str` if it exists. */
 void allc_strbuf_remove_suffix(StrBuf *str_buf, const char *str);
-
-/*
- * Center the string buffer by padding `chr` such that the length becomes `width`.
- *
- * If `width` is less than the current length [TODO]
- */
-void allc_strbuf_center(StrBuf *str_buf, size_t width, const char chr);
-
-/*
- * Make the string buffer left-justified by padding `chr` on the right side such that the length
- * becomes `width`.
- *
- * If `width` is less than the current length [TODO]
- */
-void allc_strbuf_ljust(StrBuf *str_buf, size_t width, const char chr);
-
-/*
- * Make the string buffer right-justified by padding `chr` on the left side such that the length
- * becomes `width`.
- *
- * If `width` is less than the current length [TODO]
- */
-void allc_strbuf_rjust(StrBuf *str_buf, size_t width, const char chr);
-
-/* Strip the string buffer of any leading whitespace. */
-void allc_strbuf_lstrip(StrBuf *str_buf);
-
-/* Strip the string buffer of any trailing whitespace. */
-void allc_strbuf_rstrip(StrBuf *str_buf);
-
-/* Strip the string buffer of any leading or trailing whitespace. */
-void allc_strbuf_strip(StrBuf *str_buf);
-
-/*
- * Replace all tabs with spaces.
- *
- * Uses the macro ALLC_STRBUF_EXPANDED_TAB as a replacement.
- */
-void allc_strbuf_expand_tabs(StrBuf *str_buf);
-
-/*
- * Set the string buffer content to be a concatenation of the variadic arguments with `glue` in
- * between.
- */
-void allc_strbuf_join(StrBuf *str_buf, const char *glue, ...);
 
 #endif // ALLC_STRBUF_GUARD }}}1
 
@@ -195,7 +153,7 @@ StrBuf allc_strbuf_copy_cstr(const char *str, Allocator allocator)
     return result;
 }
 
-void allc_strbuf_grow(StrBuf *str_buf, size_t n);
+void allc_strbuf_grow(StrBuf *str_buf, size_t n)
 {
     size_t new_size = str_buf->capacity + n;
     str_buf->data = str_buf->allocator.realloc(str_buf->data, new_size);

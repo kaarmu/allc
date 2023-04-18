@@ -1,7 +1,11 @@
 /*
- *  STB-style header library of tools for building your own project-specific build system.
+ *  STB-style header library of tools for building your own project-specific
+ *  build system.
  *
  *  Heavily inspired by https://github.com/tsoding/nobuild.
+ *
+ *  Description
+ *  ===========
  *
  *  Provides
  *  ========
@@ -11,120 +15,23 @@
  *  Options
  *  =======
  *
- *  Package
+ *  Library
  *  =======
  *
- *  Depends:
+ *  Dependencies:
  *    - allocator.h
  *    - logger.h
  *    - strbuf.h
  *    - path.h
  *    - list.h
  *
+ *  Version: 0.0.0
+ *
  *  Author: Kaj Munhoz Arfvidsson, 2023
  */
 
-#ifndef ALLC_BUILDER_GUARD // {{{1
-#define ALLC_BUILDER_GUARD
-
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <wait.h>
-
-#include "allocator.h"
-#include "logger.h"
-#include "strbuf.h"
-#include "path.h"
-#include "list.h"
-
-// StrBufList {{{2
-
-typedef
-    ALLC_LIST_ITEM_TYPE(StrBuf)
-    StrBufListItem;
-
-List allc_cstr_split(StrBuf *self, const char *sep);
-List allc_strbuf_split(StrBuf *self, const char *sep);
-
-// Builder {{{2
-
-typedef struct {
-    Logger logger;
-    Allocator allocator;
-} Builder;
-
-/*
- * Create a new builder object.
- */
-Builder allc_builder_new()
-{
-    Allocator allocator = allc_allocator();
-    Logger logger {
-        .stream = stderr,
-        .allocator = allocator,
-    };
-    return Builder {
-        .logger = logger,
-        .allocator = allocator,
-    };
-};
-
-// Call external commands {{{3
-
-/*
- * Call command synchronously.
- */
-void allc_builder_exec(Builder *self, const char *command)
-{
-    pid_t cpid = fork();
-    if (cpid < 0) {
-        allc_logger_panic(&self->logger,
-                          "(%s) Could not fork a child process with command \"%s\".",
-                          command,
-                          strerror(errno));
-    }
-    if (cpid == 0) {
-        const char *cmd; // TODO
-        char *const *args;
-        if (execvp(cmd, args) < 0) {
-            allc_logger_panic(&self->logger,
-                              "(%s) Could not execute child process with command \"%s\".",
-                              command,
-                              strerror(errno));
-        }
-        return;
-    }
-    while (true) {
-        int status;
-        if (waitpid(cpid , &status , WNOHANG) < 0) {
-            allc_logger_panic(&self->logger,
-                              "An error occurred while waiting for a child process to complete.");
-        }
-        if (WIFSIGNALED(status) != 0) {
-            allc_logger_panic(&self->logger,
-                              "The command \"%s\" was terminated by %s.",
-                              command,
-                              strsignal(WTERMSIG(status)));
-        }
-        if (WIFEXITED(status) == 0) {
-            continue;
-        }
-        if (WEXITSTATUS(status) != 0) {
-            allc_logger_panic(&self->logger,
-                              "The command \"%s\" exited with exit code %d.",
-                              command,
-                              WEXITSTATUS(status));
-        }
-    }
-}
-
-#endif // ALLC_BUILDER_GUARD }}}1
-
-// Stuff
-// =====
+// Stuff from nobuild
+// ==================
 //
 // FOREACH_ARRAY
 //
@@ -188,4 +95,50 @@ void allc_builder_exec(Builder *self, const char *command)
 //
 // shift_args
 
+#ifndef ALLC_BUILDER_GUARD // {{{1
+#define ALLC_BUILDER_GUARD
+
+#include <errno.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <wait.h>
+
+#include "allocator.h"
+#include "logger.h"
+#include "strbuf.h"
+#include "path.h"
+#include "list.h"
+
+// Builder {{{2
+
+typedef struct {
+    Logger logger;
+    Allocator allocator;
+} Builder;
+
+#endif // ALLC_BUILDER_GUARD }}}1
+
+#ifdef ALLC_IMPL_BUILDER // {{{1
+#ifdef ALLC_IMPL_DEPENDENCIES
+#   define ALLC_IMPL_ALLOCATOR
+#   define ALLC_IMPL_LOGGER
+#   define ALLC_IMPL_STRBUF
+#   define ALLC_IMPL_PATH
+#   define ALLC_IMPL_LIST
+#endif
+#ifndef ALLC_IMPL_BUILDER__GUARD
+#define ALLC_IMPL_BUILDER__GUARD
+
+#include "allocator.h"
+#include "logger.h"
+#include "strbuf.h"
+#include "path.h"
+#include "list.h"
+
+
+
+#endif // ALLC_IMPL_BUILDER__GUARD
+#endif // ALLC_IMPL_BUILDER }}}1
 

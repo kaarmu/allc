@@ -1,13 +1,26 @@
 /*
- * STB-style header library of a simple logger implementation.
+ *  STB-style header library of a simple logger implementation.
  *
- * Provides:
- *   - Logger
+ *  Description
+ *  ===========
  *
- * Depends:
- *   - allocator.h
+ *  Provides
+ *  ========
  *
- * Author: Kaj Munhoz Arfvidsson
+ *  Logger
+ *
+ *  Options
+ *  =======
+ *
+ *  Library
+ *  =======
+ *
+ *  Dependencies:
+ *    - allocator.h
+ *
+ *  Version: 0.0.0
+ *
+ *  Author: Kaj Munhoz Arfvidsson
  */
 
 #ifndef ALLC_LOGGER_GUARD // {{{1

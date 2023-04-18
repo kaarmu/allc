@@ -1,128 +1,141 @@
 
-
-#define ALLC_LIST_SAFE
-#define ALLC_IMPL_LIST
+#define ALLC_IMPL_BUILDER
 #define ALLC_IMPL_DEPENDENCIES
+#include "src/builder.h"
 
-#include "src/list.h"
+#include <ctype.h>
 
-void allc_list_append(List *self, size_t size, void *elem)
+size_t  allc_cstr_find_blank(const char *str)
 {
-    void *p;
-    allc_list_create_1(self, size, (void **) &p);
-    memcpy(p, elem, size);
+    const char *p = str;
+    while (*p != 0 && !isblank(*p)) {
+        ++p;
+    }
+    return p-str;
+}
+void    allc_cstr_replacen_char(char *str, const int n, const char chr, const char *rpl);
+void    allc_cstr_replacen_cstr(char *str, const int n, const char *sub, const char *rpl);
+void    allc_cstr_replaceall_char(char *str, const char chr, const char *rpl);
+void    allc_cstr_replaceall_cstr(char *str, const char *sub, const char *rpl);
+void    allc_cstr_capitalize(char *str);
+void    allc_cstr_lower(char *str);
+void    allc_cstr_upper(char *str);
+void    allc_cstr_swap_case(char *str);
+void    allc_cstr_rshift(char *str, size_t n);
+void    allc_cstr_lshift(char *str, size_t n);
+
+void    allc_strbuf_set_cstr(StrBuf *self, const char *str);
+void    allc_strbuf_split_at(StrBuf *self, size_t i, StrBuf *left, StrBuf *right);
+void    allc_strbuf_center(StrBuf *str_buf, size_t width, const char chr);
+void    allc_strbuf_ljust(StrBuf *str_buf, size_t width, const char chr);
+void    allc_strbuf_rjust(StrBuf *str_buf, size_t width, const char chr);
+void    allc_strbuf_lstrip_blank(StrBuf *self)
+{
+    for (const char *p = self->data; *p != 0; ++p) {
+        if (isblank(*p)) { continue; }
+        allc_strbuf_remove(self, 0, p - self->data);
+        return;
+    }
+}
+void    allc_strbuf_rstrip_blank(StrBuf *self)
+{
+    const char *end = self->data + self->length;
+    for (const char *p = end - 1; p != self->data - 1; --p) {
+        if (isblank(*p)) { continue; }
+        allc_strbuf_remove(self, p+1 - self->data, self->length);
+        return;
+    }
+}
+void    allc_strbuf_strip_blank(StrBuf *str_buf)
+{
+    allc_strbuf_lstrip_blank(str_buf);
+    allc_strbuf_rstrip_blank(str_buf);
+}
+void    allc_strbuf_expand_tabs(StrBuf *str_buf);
+void    allc_strbuf_join(StrBuf *str_buf, const char *glue, ...);
+
+/* Split strbuf into a list of strbuf on whitespace characters. */
+List allc_strbuf_split_space(StrBuf *self)
+{
+    Allocator allocator = allc_allocator();
+    List list = allc_list_new(allocator);
+    StrBuf temp = allc_strbuf_new(0, allocator);
+    StrBuf *left = &temp, *right = self;
+    size_t i;
+    while (true) {
+        allc_strbuf_lstrip_blank(right);
+        i = allc_cstr_find_blank(right->data);
+        if (i == right->length) { break; }
+        allc_strbuf_split_at(right, i, left, right);
+        allc_list_append(&list, sizeof (StrBuf), left);
+    }
+    allc_strbuf_del(&temp);
+    return list;
 }
 
-int main()
+Builder allc_builder_new()
 {
+    Allocator allocator = allc_allocator();
+    Logger logger = {
+        .stream = stderr,
+        .allocator = allocator,
+    };
+    return (Builder) {
+        .logger = logger,
+        .allocator = allocator,
+    };
+};
 
-    List list = allc_list_new(allc_allocator());
-
-    typedef const char * String;
-
-    {
-        size_t n = 4;
-        String *argv[n];
-        allc_list_create_n(&list, n, sizeof (String), (void **) argv);
-
-        *argv[0] = "Hello";         // 0 -4
-        *argv[1] = "Kaj";           // 1 -3
-        *argv[2] = "Munhoz";        // 2 -2
-        *argv[3] = "Arfvidsson";    // 3 -1
+void allc_builder_exec(Builder *self, const char *command)
+{
+    pid_t cpid = fork();
+    if (cpid < 0) {
+        allc_logger_panic(&self->logger,
+                          "(%s) Could not fork a child process with command \"%s\".",
+                          command,
+                          strerror(errno));
     }
-
-    ALLC_LIST_FOREACH(String, item, &list, {
-        if (*item != NULL)
-            printf("%s\n", *item);
-    });
-
-    printf("\n");
-
-    {
-        ListItem *item;
-        item = allc_list_item_at(&list, 0);
-        printf("0: %p %s\n", item, *((String *) item->data));
-        item = allc_list_item_at(&list, 1);
-        printf("1: %p %s\n", item, *((String *) item->data));
-        item = allc_list_item_at(&list, 2);
-        printf("2: %p %s\n", item, *((String *) item->data));
-        item = allc_list_item_at(&list, 3);
-        printf("3: %p %s\n", item, *((String *) item->data));
-
-        printf("\n");
-
-        item = allc_list_item_at(&list, -1);
-        printf("-1: %p %s\n", item, *((String *) item->data));
-        item = allc_list_item_at(&list, -2);
-        printf("-2: %p %s\n", item, *((String *) item->data));
-        item = allc_list_item_at(&list, -3);
-        printf("-3: %p %s\n", item, *((String *) item->data));
-        item = allc_list_item_at(&list, -4);
-        printf("-4: %p %s\n", item, *((String *) item->data));
+    if (cpid == 0) {
+        StrBuf cmd = allc_strbuf_copy_cstr(command, self->allocator);
+        List list = allc_strbuf_split_space(&cmd);
+        StrBuf *slice[list.length];
+        allc_list_slice(&list, 0, list.length, (void **) slice);
+        const char *file = slice[0]->data;
+        char *argv[list.length-1];
+        for (size_t i = 1; i < list.length; i++) {
+            argv[i] = slice[i]->data;
+        }
+        if (execvp(file, argv) < 0) {
+            allc_logger_panic(&self->logger,
+                              "(%s) Could not execute child process with command \"%s\".",
+                              command,
+                              strerror(errno));
+        }
+        allc_list_del(&list);
+        allc_strbuf_del(&cmd);
+    } else {
+        while (true) {
+            int status;
+            if (waitpid(cpid , &status , WNOHANG) < 0) {
+                allc_logger_panic(&self->logger,
+                                  "An error occurred while waiting for a child process to complete.");
+            }
+            if (WIFSIGNALED(status) != 0) {
+                allc_logger_panic(&self->logger,
+                                  "The command \"%s\" was terminated by %s.",
+                                  command,
+                                  strsignal(WTERMSIG(status)));
+            }
+            if (WIFEXITED(status) == 0) {
+                continue;
+            }
+            if (WEXITSTATUS(status) != 0) {
+                allc_logger_panic(&self->logger,
+                                  "The command \"%s\" exited with exit code %d.",
+                                  command,
+                                  WEXITSTATUS(status));
+            }
+        }
     }
-
-    printf("\n");
-
-    if (0) {
-        allc_list_remove_n(&list, 0, 2);
-
-        size_t n = 2;
-        String *argv[n];
-        allc_list_create_n(&list, n, sizeof (String), (void **) argv);
-
-        *argv[0] = "is";
-        *argv[1] = "GOAT";
-    }
-
-    ALLC_LIST_FOREACH(String, item, &list, {
-        if (*item != NULL)
-            printf("%s\n", *item);
-    });
-
-    printf("\n");
-
-    String *p;
-    allc_list_create_1(&list, 5, (void **) &p);
-    *p = "GOAT";
-
-    ALLC_LIST_FOREACH(String, item, &list, {
-        if (*item != NULL)
-            printf("%s\n", *item);
-    });
-
-    allc_list_del(&list);
-
-    return 0;
 }
 
-int main2()
-{
-    List list = allc_list_new(allc_allocator());
-
-    char s[10];
-
-    strcpy(s, "Kaj");
-    allc_list_append(&list, sizeof s, s);
-
-    strcpy(s, "is");
-    allc_list_append(&list, sizeof s, s);
-
-    strcpy(s, "GOAT");
-    allc_list_append(&list, sizeof s, s);
-
-    ALLC_LIST_FOREACH(char, str, &list, {
-        printf("%s\n", str);
-    });
-
-    printf("\n");
-
-    ListItem *x[2] = { 0 };
-    allc_list_item_slice(&list, 1, list.length, (void**) x);
-
-    for (int i = 0; i < 2; i++)
-        printf(":: %s\n", x[i]->data);
-
-    allc_list_del(&list);
-
-    return 0;
-}

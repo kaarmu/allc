@@ -162,8 +162,10 @@ void allc_list_pop_n(List *self, ssize_t i, size_t n);
 
 // Append and Insert {{{3
 
+/* Add element to the end of the list. */
 void allc_list_append(List *self, size_t size, void *elem);
-void allc_list_insert(List *self, size_t size, void *elem);
+
+void allc_list_insert(List *self, ssize_t i, size_t size, void *elem);
 
 // List Operations {{{3
 
@@ -394,6 +396,13 @@ void allc_list_slice(List *self, ssize_t i, ssize_t j, void **out)
         item = item->next;
         out[k] = item->data;
     }
+}
+
+void allc_list_append(List *self, size_t size, void *elem)
+{
+    void *p;
+    allc_list_create_1(self, size, (void **) &p);
+    memcpy(p, elem, size);
 }
 
 #endif // ALLC_IMPL_LIST__GUARD

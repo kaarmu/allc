@@ -1,7 +1,21 @@
 /*
- * STB-style header library of C-style string handling.
+ *  STB-style header library of C-style string handling.
  *
- * Author: Kaj Munhoz Arfvidsson
+ *  Description
+ *  ===========
+ *
+ *  Provides
+ *  ========
+ *
+ *  Options
+ *  =======
+ *
+ *  Library
+ *  =======
+ *
+ *  Version: 0.0.0
+ *
+ *  Author: Kaj Munhoz Arfvidsson
  */
 
 #ifndef ALLC_CSTR_GUARD // {{{1
@@ -21,7 +35,7 @@
  */
 size_t allc_cstr_length(const char *str);
 
-/* Test that string contains only blank characters. */
+/* Test that string contains only space or tab characters. */
 bool allc_cstr_is_blank(const char *str);
 
 /*
@@ -110,9 +124,6 @@ size_t allc_cstr_find_cstr(const char *str, const char *sub);
  */
 size_t allc_cstr_findn_char(const char *str, int n, const char chr);
 
-/* TODO */
-size_t allc_cstr_findn_cstr(const char *str, int n, const char *sub);
-
 // String Manipulation {{{2
 
 /*
@@ -131,35 +142,9 @@ void allc_cstr_replace_char(char *str, const char chr, const char rpl);
  */
 void allc_cstr_replace_cstr(char *str, const char *sub, const char *rpl);
 
-/* TODO */
-void allc_cstr_replacen_char(char *str, const int n, const char chr, const char *rpl);
+// String Representation {{{2
 
-/* TODO */
-void allc_cstr_replacen_cstr(char *str, const int n, const char *sub, const char *rpl);
-
-/* TODO */
-void allc_cstr_replaceall_char(char *str, const char chr, const char *rpl);
-
-/* TODO */
-void allc_cstr_replaceall_cstr(char *str, const char *sub, const char *rpl);
-
-/* TODO */
-void allc_cstr_capitalize(char *str);
-
-/* TODO */
-void allc_cstr_lower(char *str);
-
-/* TODO */
-void allc_cstr_upper(char *str);
-
-/* TODO */
-void allc_cstr_swap_case(char *str);
-
-/* TODO */
-void allc_cstr_rshift(char *str, size_t n);
-
-/* TODO */
-void allc_cstr_lshift(char *str, size_t n);
+const char *allc_cstr_repr_bool(bool b);
 
 #endif // ALLC_CSTR_GUARD }}}1
 
@@ -170,9 +155,10 @@ void allc_cstr_lshift(char *str, size_t n);
 // Macros {{{2
 
 #define ALLC_CSTR_TRUE "true"
+
 #define ALLC_CSTR_FALSE "false"
 
-// String Inspection
+// String Inspection {{{2
 
 size_t allc_cstr_length(const char *str)
 {
@@ -185,10 +171,13 @@ bool allc_cstr_is_blank(const char *str)
 {
     bool result = true;
     for (const char *p = str; *p != 0; ++p) {
-        char chr = *p;
-        result = result && (
-            (chr == ' ') || (chr == '\t')
-        );
+        switch (*p) {
+        case ' ':
+        case '\t':
+            continue;
+        default:
+            result = false;
+        }
     }
     return result;
 }
@@ -325,7 +314,7 @@ size_t allc_cstr_findn_char(const char *str, int n, const char chr)
         for (; *p != 0; ++p);
         while(++n > 0 && p != str) {
             --p;
-            for (; *p != str && *p != chr; --p);
+            for (; p != str && *p != chr; --p);
         }
     }
     return (size_t)(p-str);
@@ -343,20 +332,6 @@ size_t allc_cstr_find_cstr(const char *str, const char *sub)
         }
     };
     return i;
-}
-
-/**
- * Return length of string.
- *
- * Length does not include the null terminator.
- *
- * See also: allc_cstr_size
- */
-size_t allc_cstr_length(const char *str)
-{
-    const char *p = str;
-    for (; *p != 0; ++p);
-    return (size_t)(p-str);
 }
 
 /**
@@ -387,6 +362,13 @@ void allc_cstr_replace_cstr(char *str, const char *sub, const char *rpl)
     if (*p == 0) return;
     for (const char *q = rpl; *q != 0; ++p, ++q)
         *p = *q;
+}
+
+// String Representation {{{2
+
+const char *allc_cstr_repr_bool(bool b)
+{
+    return b ? ALLC_CSTR_TRUE : ALLC_CSTR_FALSE;
 }
 
 #endif // ALLC_IMPL_CSTR_GUARD

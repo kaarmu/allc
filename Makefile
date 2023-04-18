@@ -1,7 +1,13 @@
-run: main.c
-	cc -Wall -Wextra main.c
+CCFLAGS=-g -Wall -Wextra
+
+main.o: main.c
+	cc ${CCFLAGS} $< -o $@
 	./a.out
 
-val: main.c
-	cc -Wall -Wextra main.c
+examples: list.o cstr.o
+
+%.o: examples/%.c
+	cc ${CCFLAGS} $< -o $@
+
+valgrind:
 	valgrind ./a.out
