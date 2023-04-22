@@ -1,4 +1,3 @@
-
 #define ALLC_IMPL_BUILDER
 #define ALLC_IMPL_DEPENDENCIES
 #include "src/builder.h"
@@ -21,8 +20,10 @@ void    allc_cstr_capitalize(char *str);
 void    allc_cstr_lower(char *str);
 void    allc_cstr_upper(char *str);
 void    allc_cstr_swap_case(char *str);
-void    allc_cstr_rshift(char *str, size_t n);
-void    allc_cstr_lshift(char *str, size_t n);
+void    allc_cstr_rshift(char *str, size_t n)
+{}
+void    allc_cstr_lshift(char *str, size_t n)
+{}
 
 void    allc_strbuf_set_cstr(StrBuf *self, const char *str);
 void    allc_strbuf_split_at(StrBuf *self, size_t i, StrBuf *left, StrBuf *right);

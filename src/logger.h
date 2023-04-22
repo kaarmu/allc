@@ -60,6 +60,8 @@ void allc_logger_panic(Logger *self, const char *fmt, ...);
 #ifndef ALLC_IMPL_LOGGER_GUARD
 #define ALLC_IMPL_LOGGER_GUARD
 
+#include <stdarg.h>
+
 #include "allocator.h"
 
 void allc_logger_log(Logger *self, const char *fmt, ...)
