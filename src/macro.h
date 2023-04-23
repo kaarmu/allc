@@ -22,4 +22,8 @@
         exit(1);                                                                       \
     } while(0)
 
+#define ALLC_TEST_PRINT(fmt, value) \
+    printf("(L%03d) " fmt "\n", __LINE__, value)
+
+
 #endif // ALLC_MACRO

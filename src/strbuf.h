@@ -40,7 +40,7 @@ typedef struct {
     Allocator allocator;
 } StrBuf;
 
-// StrBuf management {{{2
+// StrBuf Management {{{2
 
 /*
  * Create a new string buffer.
@@ -66,7 +66,10 @@ void allc_strbuf_grow(StrBuf *str_buf, size_t n);
 /* Increase the string buffer capacity to `n` bytes in total, iff current capacity < `n`. */
 void allc_strbuf_ensure_capacity(StrBuf *str_buf, size_t n);
 
-// String manipulation {{{2
+// String Manipulation {{{2
+
+/* Set string buffer content to be exactly C-style string `str`. */
+void allc_strbuf_set_cstr(StrBuf *self, const char *str);
 
 /* Append a copy of the C-style string `str` to the end of the string buffer. */
 void allc_strbuf_append_cstr(StrBuf *str_buf, const char *str);
@@ -78,14 +81,14 @@ void allc_strbuf_append_cstr(StrBuf *str_buf, const char *str);
  * However, if `pos` is outside the length of the string buffer then [TODO]
  *
  * Any existing text starting at `pos` is right shifted by the new strings length using
- * `allc_cstr_rshift`.
+ * `allc_cstr_shift_right`.
  */
 void allc_strbuf_insert_cstr(StrBuf *str_buf, size_t pos, const char *str);
 
 /*
  * Remove the substring that starts at `from` and continues until, but not including, `to`.
  *
- * The removal uses `allc_cstr_lshift` on the string starting at `from` for `to-from` bytes.
+ * The removal uses `allc_cstr_shift_left` on the string starting at `from` for `to-from` bytes.
  *
  * Both `from` and `to` must be inside the string buffer length, otherwise [TODO]
  */
@@ -160,13 +163,6 @@ void allc_strbuf_grow(StrBuf *str_buf, size_t n)
     str_buf->capacity = new_size;
 }
 
-void allc_strbuf_ensure_capacity(StrBuf *str_buf, size_t n)
-{
-    if (str_buf->capacity < n) {
-        allc_strbuf_grow(str_buf, n-str_buf->capacity);
-    }
-}
-
 // String manipulation {{{2
 
 void allc_strbuf_append_cstr(StrBuf *str_buf, const char *str)
@@ -174,37 +170,7 @@ void allc_strbuf_append_cstr(StrBuf *str_buf, const char *str)
     size_t length = allc_cstr_length(str);
     allc_strbuf_ensure_capacity(str_buf, str_buf->length + length + 1);
     memcpy(str_buf->data + str_buf->length, str, length + 1); // length + 1 for null terminator
-}
-
-void allc_strbuf_insert_cstr(StrBuf *str_buf, size_t pos, const char *str)
-{
-    size_t length = allc_cstr_length(str);
-    allc_strbuf_ensure_capacity(str_buf, str_buf->length + length + 1);
-    allc_cstr_rshift(str_buf->data + pos, length);
-    memcpy(str_buf->data + pos, str, length);
-}
-
-void allc_strbuf_remove(StrBuf *str_buf, size_t from, size_t to)
-{
-    allc_cstr_lshift(str_buf->data, to-from);
-    memset(str_buf->data + to, 0, str_buf->length - to);
-}
-
-void allc_strbuf_remove_prefix(StrBuf *str_buf, const char *str)
-{
-    if (allc_cstr_is_starting_with(str_buf->data, str)) {
-        size_t length = allc_cstr_length(str);
-        allc_cstr_lshift(str_buf->data, length);
-    }
-}
-
-void allc_strbuf_remove_suffix(StrBuf *str_buf, const char *str)
-{
-    if (allc_cstr_is_ending_with(str_buf->data, str)) {
-        size_t length = allc_cstr_length(str);
-        size_t i = allc_cstr_findn_cstr(str_buf->data, -1, str);
-        memset(str_buf->data + i, 0, length);
-    }
+    str_buf->length += length;
 }
 
 #endif // ALLC_IMPL_STRBUF_GUARD

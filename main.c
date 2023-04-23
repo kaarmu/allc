@@ -4,29 +4,58 @@
 
 #include <ctype.h>
 
-size_t  allc_cstr_find_blank(const char *str)
-{
-    const char *p = str;
-    while (*p != 0 && !isblank(*p)) {
-        ++p;
-    }
-    return p-str;
-}
-void    allc_cstr_replacen_char(char *str, const int n, const char chr, const char *rpl);
-void    allc_cstr_replacen_cstr(char *str, const int n, const char *sub, const char *rpl);
-void    allc_cstr_replaceall_char(char *str, const char chr, const char *rpl);
-void    allc_cstr_replaceall_cstr(char *str, const char *sub, const char *rpl);
 void    allc_cstr_capitalize(char *str);
+void    allc_cstr_capitalize_all(char *str);
 void    allc_cstr_lower(char *str);
+void    allc_cstr_lower_all(char *str);
 void    allc_cstr_upper(char *str);
+void    allc_cstr_upper_all(char *str);
 void    allc_cstr_swap_case(char *str);
-void    allc_cstr_rshift(char *str, size_t n)
-{}
-void    allc_cstr_lshift(char *str, size_t n)
-{}
+void    allc_cstr_swap_case_all(char *str);
 
-void    allc_strbuf_set_cstr(StrBuf *self, const char *str);
-void    allc_strbuf_split_at(StrBuf *self, size_t i, StrBuf *left, StrBuf *right);
+void    allc_cstr_replace_all_char(char *str, const char chr, const char rpl);
+void    allc_cstr_replace_all_cstr(char *str, const char *sub, const char *rpl);
+
+
+void allc_strbuf_remove_suffix(StrBuf *str_buf, const char *str)
+{
+    if (allc_cstr_is_ending_with(str_buf->data, str)) {
+        size_t length = allc_cstr_length(str);
+        size_t i = allc_cstr_find_cstr(str_buf->data, -1, str);
+        memset(str_buf->data + i, 0, length);
+        str_buf->length -= length;
+    }
+}
+void    allc_strbuf_insert_cstr(StrBuf *str_buf, size_t pos, const char *str)
+{
+    size_t length = allc_cstr_length(str);
+    allc_strbuf_ensure_capacity(str_buf, str_buf->length + length + 1);
+    allc_cstr_shift_right(str_buf->data + pos, length);
+    memcpy(str_buf->data + pos, str, length);
+    str_buf->length += length;
+}
+void allc_strbuf_remove_prefix(StrBuf *str_buf, const char *str)
+{
+    if (allc_cstr_is_starting_with(str_buf->data, str)) {
+        size_t length = allc_cstr_length(str);
+        allc_cstr_shift_left(str_buf->data, length);
+        str_buf->length -= length;
+    }
+}
+void allc_strbuf_remove(StrBuf *str_buf, size_t from, size_t to)
+{
+    allc_cstr_shift_left(str_buf->data, to-from);
+    memset(str_buf->data + to, 0, str_buf->length - to);
+    str_buf->length -= to - from;
+}
+
+void    allc_strbuf_split_at(StrBuf *self, size_t i, StrBuf *left, StrBuf *right)
+{
+    allc_strbuf_set_cstr(right, self->data + i);
+    *(self->data + i) = 0; // mark end of string ; we can be a bit sloppy with this since we del self after
+    allc_strbuf_set_cstr(left, self->data);
+    allc_strbuf_del(self);
+}
 void    allc_strbuf_center(StrBuf *str_buf, size_t width, const char chr);
 void    allc_strbuf_ljust(StrBuf *str_buf, size_t width, const char chr);
 void    allc_strbuf_rjust(StrBuf *str_buf, size_t width, const char chr);
@@ -54,6 +83,7 @@ void    allc_strbuf_strip_blank(StrBuf *str_buf)
 }
 void    allc_strbuf_expand_tabs(StrBuf *str_buf);
 void    allc_strbuf_join(StrBuf *str_buf, const char *glue, ...);
+
 
 /* Split strbuf into a list of strbuf on whitespace characters. */
 List allc_strbuf_split_space(StrBuf *self)
@@ -140,3 +170,8 @@ void allc_builder_exec(Builder *self, const char *command)
     }
 }
 
+int main()
+{
+    Builder bob = allc_builder_new();
+    allc_builder_exec(&bob, "cat main.c");
+}

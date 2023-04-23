@@ -1,0 +1,37 @@
+StrBuf  allc_strbuf_new(size_t length, Allocator allocator);
+void    allc_strbuf_del(StrBuf *str_buf);
+StrBuf  allc_strbuf_copy(StrBuf *str_buf);
+
+void    allc_strbuf_grow(StrBuf *str_buf, size_t n);
+void    allc_strbuf_ensure_capacity(StrBuf *str_buf, size_t n);
+
+void    allc_strbuf_clear(StrBuf *self)
+void    allc_strbuf_set_cstr(StrBuf *self, const char *str);
+
+void    allc_strbuf_append_cstr(StrBuf *str_buf, const char *str);
+void    allc_strbuf_insert_cstr(StrBuf *str_buf, size_t pos, const char *str);
+
+void    allc_strbuf_join_2(StrBuf *self, const char *glue, StrBuf *other);
+void    allc_strbuf_join_n(StrBuf *str_buf, const char *glue, size_t n, StrBuf **arr);
+
+void    allc_strbuf_split_at(StrBuf *self, size_t i, StrBuf *left, StrBuf *right)
+
+void    allc_strbuf_remove(StrBuf *str_buf, size_t from, size_t to);
+void    allc_strbuf_remove_prefix(StrBuf *str_buf, const char *str);
+void    allc_strbuf_remove_suffix(StrBuf *str_buf, const char *str);
+
+void    allc_strbuf_align_center(StrBuf *str_buf, size_t width, const char chr);
+void    allc_strbuf_align_left(StrBuf *str_buf, size_t width, const char chr);
+void    allc_strbuf_align_right(StrBuf *str_buf, size_t width, const char chr);
+
+void    allc_strbuf_strip(StrBuf *str_buf)
+void    allc_strbuf_strip_left(StrBuf *self)
+void    allc_strbuf_strip_right(StrBuf *self)
+void    allc_strbuf_strip_blank(StrBuf *str_buf)
+void    allc_strbuf_strip_blank_left(StrBuf *self)
+void    allc_strbuf_strip_blank_right(StrBuf *self)
+
+void    allc_strbuf_expand_tabs(StrBuf *str_buf);
+
+// Out
+StrBuf  allc_strbuf_copy_cstr(const char *str, Allocator allocator);

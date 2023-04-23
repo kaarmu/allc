@@ -1,41 +1,86 @@
-#include <stdio.h>
+#include "../src/macro.h"
 
 #define ALLC_IMPL_CSTR
 #include "../src/cstr.h"
 
 int main() {
 
-    printf("0 :== %zu\n", allc_cstr_length(""));
-    printf("12 :== %zu\n", allc_cstr_length("Hello, world"));
+    ALLC_TEST_PRINT("0       :== %zu", allc_cstr_length(""));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_length("Hello, world"));
 
-    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_digit("123")));
-    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_digit("1s23")));
-    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_alpha("asd341naAd")));
-    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_alnum("asd341naAd")));
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_digit("123")));
+    ALLC_TEST_PRINT("false   :== %s", allc_cstr_repr_bool(allc_cstr_is_digit("1s23")));
+    ALLC_TEST_PRINT("false   :== %s", allc_cstr_repr_bool(allc_cstr_is_alpha("asd341naAd")));
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_alnum("asd341naAd")));
 
-    printf("0 :== %zu\n", allc_cstr_find_char("", '!'));
-    printf("5 :== %zu\n", allc_cstr_find_char("Hello, world", ','));
-    printf("12 :== %zu\n", allc_cstr_find_char("Hello, world", '!'));
-    printf("10 :== %zu\n", allc_cstr_findn_char("Hello, world", 3, 'l'));
-    printf("12 :== %zu\n", allc_cstr_findn_char("Hello, world", 3, '!'));
-    printf("7 :== %zu\n", allc_cstr_find_cstr("Hello, world", "wor"));
-    printf("12 :== %zu\n", allc_cstr_find_cstr("Hello, world", "word"));
-    printf("12 :== %zu\n", allc_cstr_find_cstr("Hello, world", "words"));
+    ALLC_TEST_PRINT("0       :== %zu", allc_cstr_find_char("", 1, '!'));
+    ALLC_TEST_PRINT("5       :== %zu", allc_cstr_find_char("Hello, world", 1, ','));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_char("Hello, world", 1, '!'));
+    ALLC_TEST_PRINT("10      :== %zu", allc_cstr_find_char("Hello, world", 3, 'l'));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_char("Hello, world", 3, '!'));
+    ALLC_TEST_PRINT("7       :== %zu", allc_cstr_find_cstr("Hello, world", 1, "wor"));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_cstr("Hello, world", 1, "word"));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_cstr("Hello, world", 1, "words"));
+    ALLC_TEST_PRINT("7       :== %zu", allc_cstr_find_cstr("Hello, world", 1, "wor"));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_cstr("Hello, world", -1, "word"));
+    ALLC_TEST_PRINT("2       :== %zu", allc_cstr_find_cstr("Hello, world", 1, "l"));
+    ALLC_TEST_PRINT("10      :== %zu", allc_cstr_find_cstr("Hello, world", -1, "l"));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_cstr("Hello, world", 3, "!"));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_cstr("Hello, world", 3, ""));
+    ALLC_TEST_PRINT("6       :== %zu", allc_cstr_find_blank("Hello, world"));
+    ALLC_TEST_PRINT("12      :== %zu", allc_cstr_find_blank("Hello,.world"));
 
-    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "Hell")));
-    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "Helg")));
-    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "")));
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_equal("Hello, world", "Hello, world")));
+    ALLC_TEST_PRINT("false   :== %s", allc_cstr_repr_bool(allc_cstr_is_equal("Hello, world", "Hello. world")));
+    ALLC_TEST_PRINT("false   :== %s", allc_cstr_repr_bool(allc_cstr_is_equal("Hello, world", "Hello, world!")));
 
-    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "ld")));
-    printf("false :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "cold")));
-    printf("true :== %s\n", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "")));
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "Hell")));
+    ALLC_TEST_PRINT("false   :== %s", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "Helg")));
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_starting_with("Hello, world", "")));
 
-    char x[13] = "Hello, world";
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_ending_with("Hello, world", "ld")));
+    ALLC_TEST_PRINT("false   :== %s", allc_cstr_repr_bool(allc_cstr_is_ending_with("Hello, world", "cold")));
+    ALLC_TEST_PRINT("true    :== %s", allc_cstr_repr_bool(allc_cstr_is_ending_with("Hello, world", "")));
 
-    allc_cstr_replace_char(x, 'w', 'W');
-    printf("Hello, World :== %s\n", x);
+    char x[13];
 
-    allc_cstr_replace_cstr(x, "Hello", "hyelo");
-    printf("hyelo, World :== %s\n", x);
+    allc_cstr_copy("Hello, world", x);
+    allc_cstr_replace_char(x, 1, 'w', 'W');
+    ALLC_TEST_PRINT("Hello, World     :== %s", x);
 
+    allc_cstr_copy("Hello, world", x);
+    allc_cstr_replace_cstr(x, 1, "Hello", "hyelo");
+    ALLC_TEST_PRINT("hyelo, world     :== %s", x);
+
+    allc_cstr_copy("Hello, world", x);
+    allc_cstr_replace_char(x, 3, 'l', 'i');
+    ALLC_TEST_PRINT("Heiio, worid     :== %s", x);
+
+    allc_cstr_copy("Hello, lord", x);
+    allc_cstr_replace_cstr(x, 2, "lo", "ya");
+    ALLC_TEST_PRINT("Helya, yard      :== %s", x);
+
+    allc_cstr_copy("Hello, lord", x);
+    allc_cstr_replace_cstr(x, 3, "lo", "ya");
+    ALLC_TEST_PRINT("Helya, yard      :== %s", x);
+
+    allc_cstr_copy("lolo, lolo", x);
+    allc_cstr_replace_cstr(x, 2, "lolo", "yoyo");
+    ALLC_TEST_PRINT("yoyo, yoyo       :== %s", x);
+
+    allc_cstr_copy("lolo, lolo", x);
+    allc_cstr_replace_cstr(x, 2, "lo", "yo");
+    ALLC_TEST_PRINT("yoyo, lolo       :== %s", x);
+
+    allc_cstr_copy("lolo, lolo", x);
+    allc_cstr_replace_cstr(x, 4, "lo", "yo");
+    ALLC_TEST_PRINT("yoyo, yoyo       :== %s", x);
+
+    allc_cstr_copy("Hello, world", x);
+    allc_cstr_shift_left(x, 2);
+    ALLC_TEST_PRINT("llo, world       :== %s", x);
+
+    allc_cstr_copy("Hello, world", x);
+    allc_cstr_shift_right(x, 2);
+    ALLC_TEST_PRINT("Hello, wor       :== %s", x);
 }
