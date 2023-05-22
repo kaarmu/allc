@@ -1,34 +1,20 @@
 /*
- *  STB-style header library of tools for building your own project-specific
- *  build system.
- *
- *  Heavily inspired by https://github.com/tsoding/nobuild.
+ *  Build your own project-specific build system.
  *
  *  Description
  *  ===========
- *
- *  Provides
- *  ========
- *
- *  Builder
+ *  << What is this module about? >>
  *
  *  Options
  *  =======
+ *  << What compilation options is available? >>
  *
- *  Library
+ *  Content
  *  =======
+ *  << What types/subroutines does this module provide? >>
  *
- *  Dependencies:
- *    - allocator.h
- *    - logger.h
- *    - strbuf.h
- *    - path.h
- *    - list.h
- *
- *  Version: 0.0.0
- *
- *  Author: Kaj Munhoz Arfvidsson, 2023
  */
+
 
 // Stuff from nobuild
 // ==================
@@ -111,34 +97,11 @@
 #include "path.h"
 #include "list.h"
 
-// Builder {{{2
+// Builder
 
 typedef struct {
     Logger logger;
     Allocator allocator;
 } Builder;
 
-#endif // ALLC_BUILDER_GUARD }}}1
-
-#ifdef ALLC_IMPL_BUILDER // {{{1
-#ifdef ALLC_IMPL_DEPENDENCIES
-#   define ALLC_IMPL_ALLOCATOR
-#   define ALLC_IMPL_LOGGER
-#   define ALLC_IMPL_STRBUF
-#   define ALLC_IMPL_PATH
-#   define ALLC_IMPL_LIST
-#endif
-#ifndef ALLC_IMPL_BUILDER__GUARD
-#define ALLC_IMPL_BUILDER__GUARD
-
-#include "allocator.h"
-#include "logger.h"
-#include "strbuf.h"
-#include "path.h"
-#include "list.h"
-
-
-
-#endif // ALLC_IMPL_BUILDER__GUARD
-#endif // ALLC_IMPL_BUILDER }}}1
-
+#endif // ALLC_BUILDER_GUARD

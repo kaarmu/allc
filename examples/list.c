@@ -82,32 +82,6 @@ int main()
             printf("%s\n", *item);
     });
 
-    allc_list_del(&list);
-
-    return 0;
-}
-
-int main2()
-{
-    List list = allc_list_new(allc_allocator());
-
-    char s[10];
-
-    strcpy(s, "Kaj");
-    allc_list_append(&list, sizeof s, s);
-
-    strcpy(s, "is");
-    allc_list_append(&list, sizeof s, s);
-
-    strcpy(s, "GOAT");
-    allc_list_append(&list, sizeof s, s);
-
-    ALLC_LIST_FOREACH(char, str, &list, {
-        printf("%s\n", str);
-    });
-
-    printf("\n");
-
     ListItem *x[2] = { 0 };
     allc_list_item_slice(&list, 1, list.length, (void**) x);
 

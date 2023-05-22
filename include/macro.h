@@ -1,7 +1,23 @@
 /*
- * STB-style header library of pre-processor macros.
+ *  Useful pre-processor macros.
  *
- * Author: Kaj Munhoz Arfvidsson
+ *  Description
+ *  ===========
+ *  << What is this module about? >>
+ *
+ *  Options
+ *  =======
+ *  << What compilation options is available? >>
+ *
+ *  Content
+ *  =======
+ *  << What types/subroutines does this module provide? >>
+ *
+ *  Macros
+ *  ------
+ *  [x] ALLC_PANIC
+ *  [x] ALLC_NOT_IMPLEMENTED
+ *  [x] ALLC_DEBUG_VALUE
  */
 
 #ifndef ALLC_MACRO
@@ -9,6 +25,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+// Macros {{{
 
 #define ALLC_PANIC(msg)                                                      \
     do {                                                                     \
@@ -22,8 +40,7 @@
         exit(1);                                                                       \
     } while(0)
 
-#define ALLC_TEST_PRINT(fmt, value) \
+#define ALLC_DEBUG_VALUE(fmt, value) \
     printf("(L%03d) " fmt "\n", __LINE__, value)
-
 
 #endif // ALLC_MACRO

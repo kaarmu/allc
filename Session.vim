@@ -13,29 +13,76 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +33 main.c
+badd +52 main.c
 badd +2 man://memset(3)
-badd +0 term://~/Projects/C/allc//92865:/bin/bash
-badd +214 src/strbuf.h
-badd +5 examples/cstr.c
-badd +24 src/cstr.h
+badd +103 src/strbuf.h
+badd +1 examples/cstr.c
+badd +179 src/cstr.h
 badd +1 strbuf
-badd +1 src
+badd +1 examples/strbuf.c
+badd +1 term://~/Projects/C/allc//62202:/bin/bash
+badd +1 src/builder.h
+badd +115 src/logger.h
+badd +1 ~/Projects/C/nobuild/.git/HEAD
+badd +46 man://fork(3am)
+badd +1 src.lis
+badd +398 src/list.h
+badd +0 examples/list.c
+badd +0 term://~/Projects/C/allc//17618:tail\ -f\ /dev/null;\#gdb\ program
+badd +0 term://~/Projects/C/allc//17620:/usr/bin/gdb
 argglobal
 %argdel
 $argadd main.c
+set stal=2
+tabnew +setlocal\ bufhidden=wipe
+tabnew +setlocal\ bufhidden=wipe
+tabnew +setlocal\ bufhidden=wipe
+tabnew +setlocal\ bufhidden=wipe
+tabrewind
+argglobal
+if bufexists(fnamemodify("term://~/Projects/C/allc//62202:/bin/bash", ":p")) | buffer term://~/Projects/C/allc//62202:/bin/bash | else | edit term://~/Projects/C/allc//62202:/bin/bash | endif
+if &buftype ==# 'terminal'
+  silent file term://~/Projects/C/allc//62202:/bin/bash
+endif
+balt src/strbuf.h
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=10
+setlocal fml=1
+setlocal fdn=3
+setlocal fen
+let s:l = 15 - ((14 * winheight(0) + 19) / 38)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 15
+normal! 032|
+tabnext
 edit main.c
+argglobal
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=10
+setlocal fml=1
+setlocal fdn=3
+setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 51 - ((8 * winheight(0) + 19) / 38)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 51
+normal! 08|
+tabnext
+edit examples/strbuf.c
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
-wincmd _ | wincmd |
-vsplit
-1wincmd h
-wincmd w
-wincmd _ | wincmd |
-split
-1wincmd k
-wincmd w
 wincmd _ | wincmd |
 vsplit
 1wincmd h
@@ -49,34 +96,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 85 + 128) / 256)
-exe '2resize ' . ((&lines * 34 + 35) / 71)
-exe 'vert 2resize ' . ((&columns * 170 + 128) / 256)
-exe '3resize ' . ((&lines * 34 + 35) / 71)
-exe 'vert 3resize ' . ((&columns * 84 + 128) / 256)
-exe '4resize ' . ((&lines * 34 + 35) / 71)
-exe 'vert 4resize ' . ((&columns * 85 + 128) / 256)
-argglobal
-if bufexists(fnamemodify("term://~/Projects/C/allc//92865:/bin/bash", ":p")) | buffer term://~/Projects/C/allc//92865:/bin/bash | else | edit term://~/Projects/C/allc//92865:/bin/bash | endif
-if &buftype ==# 'terminal'
-  silent file term://~/Projects/C/allc//92865:/bin/bash
-endif
-balt main.c
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=10
-setlocal fml=1
-setlocal fdn=3
-setlocal fen
-let s:l = 39 - ((2 * winheight(0) + 34) / 69)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 39
-normal! 034|
-wincmd w
+exe 'vert 1resize ' . ((&columns * 73 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 73 + 73) / 147)
 argglobal
 balt src/cstr.h
 setlocal fdm=manual
@@ -89,18 +110,19 @@ setlocal fdn=3
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 33 - ((28 * winheight(0) + 17) / 34)
+let s:l = 21 - ((7 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 33
-normal! 024|
+keepjumps 21
+normal! 0
 wincmd w
 argglobal
 if bufexists(fnamemodify("src/strbuf.h", ":p")) | buffer src/strbuf.h | else | edit src/strbuf.h | endif
 if &buftype ==# 'terminal'
   silent file src/strbuf.h
 endif
+balt examples/strbuf.c
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -111,17 +133,121 @@ setlocal fdn=3
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 145 - ((4 * winheight(0) + 17) / 34)
+let s:l = 104 - ((19 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 145
+keepjumps 104
 normal! 0
+wincmd w
+exe 'vert 1resize ' . ((&columns * 73 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 73 + 73) / 147)
+tabnext
+edit examples/cstr.c
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe 'vert 1resize ' . ((&columns * 73 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 73 + 73) / 147)
+argglobal
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=10
+setlocal fml=1
+setlocal fdn=3
+setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 113 - ((35 * winheight(0) + 19) / 38)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 113
+normal! 020|
 wincmd w
 argglobal
 if bufexists(fnamemodify("src/cstr.h", ":p")) | buffer src/cstr.h | else | edit src/cstr.h | endif
 if &buftype ==# 'terminal'
   silent file src/cstr.h
+endif
+balt examples/cstr.c
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=10
+setlocal fml=1
+setlocal fdn=3
+setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 179 - ((25 * winheight(0) + 19) / 38)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 179
+normal! 017|
+wincmd w
+exe 'vert 1resize ' . ((&columns * 73 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 73 + 73) / 147)
+tabnext
+edit examples/list.c
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe 'vert 1resize ' . ((&columns * 73 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 73 + 73) / 147)
+argglobal
+balt src/list.h
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=10
+setlocal fml=1
+setlocal fdn=3
+setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 110 - ((17 * winheight(0) + 19) / 38)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 110
+normal! 04|
+wincmd w
+argglobal
+if bufexists(fnamemodify("src/list.h", ":p")) | buffer src/list.h | else | edit src/list.h | endif
+if &buftype ==# 'terminal'
+  silent file src/list.h
 endif
 setlocal fdm=manual
 setlocal fde=0
@@ -133,22 +259,17 @@ setlocal fdn=3
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 32 - ((24 * winheight(0) + 17) / 34)
+let s:l = 398 - ((25 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 32
-normal! 011|
+keepjumps 398
+normal! 05|
 wincmd w
-2wincmd w
-exe 'vert 1resize ' . ((&columns * 85 + 128) / 256)
-exe '2resize ' . ((&lines * 34 + 35) / 71)
-exe 'vert 2resize ' . ((&columns * 170 + 128) / 256)
-exe '3resize ' . ((&lines * 34 + 35) / 71)
-exe 'vert 3resize ' . ((&columns * 84 + 128) / 256)
-exe '4resize ' . ((&lines * 34 + 35) / 71)
-exe 'vert 4resize ' . ((&columns * 85 + 128) / 256)
-tabnext 1
+exe 'vert 1resize ' . ((&columns * 73 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 73 + 73) / 147)
+tabnext 2
+set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
