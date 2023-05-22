@@ -4,9 +4,13 @@ main.o: main.c
 	cc ${CCFLAGS} $< -o $@
 	./a.out
 
-examples: list.o cstr.o
+out/%.o: src/%.c
+	cc ${CCFLAGS} $< -o $@
 
-%.o: examples/%.c
+examples: out/examples/list.o
+	mkdir -p out/examples
+
+out/examples/%.o: examples/%.c
 	cc ${CCFLAGS} $< -o $@
 
 valgrind:

@@ -3,7 +3,50 @@
 #include <stdio.h>
 #include <string.h>
 
-// List and List Item {{{
+// List Item {{{
+/**
+ *  This section is part of the private implementation of AllCList.
+ *
+ *  Content
+ *  =======
+ *
+ *  [x] _AllCListItem
+ *  [x] _allc_listitem_new
+ *  [x] _allc_listitem_del
+ *  [x] _allc_listitem_at
+ *  [x] _allc_listitem_jump
+ *
+**/
+
+/**
+ * An item in the list.
+ *
+ * This is a wrapper around every element in the list. This is why it is important to manage
+ * elements only with the provided `allc_list_*` functions, otherwise the list might behave
+ * unexpectedly.
+**/
+typedef struct _AllCListItem {
+    struct _AllCListItem *next;
+    struct _AllCListItem *prev;
+    size_t size;
+    unsigned char data[];
+} _AllCListItem;
+
+/* Allocate a new item. */
+_AllCListItem *allc_list_item_new(AllCList *self, size_t size);
+
+/* Delete the item. */
+void allc_list_item_del(AllCList *self, _AllCListItem *p);
+
+/**
+ * Get a pointer to the item at given index.
+**/
+_AllCListItem *allc_list_item_at(AllCList *self, ssize_t i);
+
+/* Skip forward or backward N steps in the list. */
+_AllCListItem *allc_listitem_jump(_AllCListItem *self, ssize_t n);
+
+// List {{{
 
 ListItem *allc_listitem_skip(ListItem *self, ssize_t n)
 {
