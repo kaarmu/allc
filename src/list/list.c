@@ -1,75 +1,8 @@
-#include "../include/list.h"
+#include "_listitem.h"
+#include "../list.h"
 
-#include <stdio.h>
-#include <string.h>
-
-// List Item {{{
-/**
- *  This section is part of the private implementation of AllCList.
- *
- *  Content
- *  =======
- *
- *  [x] _AllCListItem
- *  [x] _allc_listitem_new
- *  [x] _allc_listitem_del
- *  [x] _allc_listitem_at
- *  [x] _allc_listitem_jump
- *
-**/
-
-/**
- * An item in the list.
- *
- * This is a wrapper around every element in the list. This is why it is important to manage
- * elements only with the provided `allc_list_*` functions, otherwise the list might behave
- * unexpectedly.
-**/
-typedef struct _AllCListItem {
-    struct _AllCListItem *next;
-    struct _AllCListItem *prev;
-    size_t size;
-    unsigned char data[];
-} _AllCListItem;
-
-/* Allocate a new item. */
-_AllCListItem *allc_list_item_new(AllCList *self, size_t size);
-
-/* Delete the item. */
-void allc_list_item_del(AllCList *self, _AllCListItem *p);
-
-/**
- * Get a pointer to the item at given index.
-**/
-_AllCListItem *allc_list_item_at(AllCList *self, ssize_t i);
-
-/* Skip forward or backward N steps in the list. */
-_AllCListItem *allc_listitem_jump(_AllCListItem *self, ssize_t n);
-
-// List {{{
-
-ListItem *allc_listitem_skip(ListItem *self, ssize_t n)
-{
-    ListItem *p = self;
-    if (n < 0) {
-        for (; n != 0; n++) {
-#ifdef ALLC_LIST_SAFE
-            if (p->prev == NULL)
-                ALLC_PANIC("Skipping past end of list.\n");
-#endif
-            p = p->prev;
-        }
-    } else {
-        for (; n != 0; n--) {
-#ifdef ALLC_LIST_SAFE
-            if (p->next == NULL)
-                ALLC_PANIC("Skipping past end of list.\n");
-#endif
-            p = p->next;
-        }
-    }
-    return p;
-}
+// List {{{1
+// ---------
 
 List allc_list_new(Allocator allocator)
 {
@@ -85,27 +18,17 @@ void allc_list_del(List *self)
 {
     for (ListItem *q, *p = self->head; p != NULL; p = q) {
         q = p->next;
-        allc_list_item_del(self, p);
+        allc_listitem_del(self->allocator, p);
     }
 }
 
-// Create and Remove Items {{{
 
-ListItem *allc_list_item_new(List *self, size_t size)
-{
-    ListItem *p = self->allocator.alloc(size + sizeof (ListItem));
-    p->size = size;
-    return p;
-}
-
-void allc_list_item_del(List *self, ListItem *p)
-{
-    self->allocator.free(p);
-}
+// Element Operations {{{1
+// -----------------------
 
 void allc_list_create_1(List *self, size_t size, void **out)
 {
-    ListItem *p = allc_list_item_new(self, size);
+    ListItem *p = allc_listitem_new(self->allocator, size);
     p->prev = self->last;
     if (self->length == 0) {
         self->head = p;
@@ -126,10 +49,10 @@ void allc_list_create_n(List *self, size_t n, size_t size, void **out)
         return;
     }
     ListItem *arr[n];
-    arr[0] = allc_list_item_new(self, size);
+    arr[0] = allc_listitem_new(self->allocator, size);
     out[0] = arr[0]->data;
     for (size_t i = 1; i < n; i++) {
-        arr[i] = allc_list_item_new(self, size);
+        arr[i] = allc_listitem_new(self->allocator, size);
         arr[i]->prev = arr[i-1];
         arr[i-1]->next = arr[i];
         out[i] = arr[i]->data;
@@ -142,9 +65,9 @@ void allc_list_create_n(List *self, size_t n, size_t size, void **out)
 
 void allc_list_remove_1(List *self, ssize_t i)
 {
-    ListItem *p = allc_list_item_at(self, i);
-    if (p->prev != NULL) { p->prev->next = p->next; }
-    if (p->next != NULL) { p->next->prev = p->prev; }
+    ListItem *p = i < 0 ? self->head : self->last;
+    if (i < 0) { i += 1; } // starting from last is a step on its own
+    p = allc_listitem_jump(p, i);
     if (p == self->head) { self->head = p->next; }
     if (p == self->last) { self->last = p->prev; }
     self->length -= 1;
@@ -176,7 +99,8 @@ void allc_list_remove_n(List *self, ssize_t i, size_t n)
     }
 }
 
-// Accessing List Content {{{
+// Accessing Elements {{{1
+// -----------------------
 
 void *allc_list_at(List *self, ssize_t i)
 {
