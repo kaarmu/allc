@@ -1,31 +1,32 @@
 /**
- * Item header for linked lists.
+ *  Item header for linked lists.
  *
- * Description
- * ===========
- * ListItem is an internal structure for linked lists in AllC. Every element in
- * the list is allocated with ListItem prefixed. ListItem contains the pointers
- * to the next/previous element in the list.
+ *  Description
+ *  ===========
  *
- * Options
- * =======
- * Same as for `list.h`.
+ *  ListItem is an internal structure for linked lists in AllC. Every element in
+ *  the list is allocated with ListItem prefixed. ListItem contains the pointers
+ *  to the next/previous element in the list.
  *
- * Content
- * =======
+ *  Options
+ *  =======
  *
- * List Item
- * ---------
+ *  Same as for `list.h`.
  *
- * [x] AllCListItem
- * [x] allc_listitem_new
- * [x] allc_listitem_del
- * [x] allc_listitem_jump
- * [x] allc_listitem_detach
- * [x] allc_listitem_attach_back
- * [x] allc_listitem_attach_front
+ *  Content
+ *  =======
  *
- * (Kaj Munhoz Arfvidsson, 2023)
+ *  1) List Item
+ *
+ *      [x] ListItem
+ *      [x] allc_listitem_new
+ *      [x] allc_listitem_del
+ *      [x] allc_listitem_jump
+ *      [x] allc_listitem_detach
+ *      [x] allc_listitem_attach_before
+ *      [x] allc_listitem_attach_after
+ *
+ *  (Kaj Munhoz Arfvidsson, 2023)
  **/
 
 #ifndef ALLC_LISTITEM__GUARD

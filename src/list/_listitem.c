@@ -19,21 +19,9 @@ ListItem *allc_listitem_jump(ListItem *self, ssize_t n)
 {
     ListItem *p = self;
     if (n < 0) {
-        for (; n != 0; n++) {
-#ifdef ALLC_LIST_SAFE
-            if (p->prev == NULL)
-                ALLC_PANIC("Skipping past end of list.\n");
-#endif
-            p = p->prev;
-        }
+        for (; p != NULL && n != 0; n++) { p = p->prev; }
     } else {
-        for (; n != 0; n--) {
-#ifdef ALLC_LIST_SAFE
-            if (p->next == NULL)
-                ALLC_PANIC("Skipping past end of list.\n");
-#endif
-            p = p->next;
-        }
+        for (; p != NULL && n != 0; n--) { p = p->next; }
     }
     return p;
 }

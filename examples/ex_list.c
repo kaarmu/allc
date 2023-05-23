@@ -1,8 +1,4 @@
 
-#define ALLC_LIST_SAFE
-#define ALLC_IMPL_LIST
-#define ALLC_IMPL_DEPENDENCIES
-
 #include "../src/list.h"
 
 int main()
