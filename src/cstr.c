@@ -1,11 +1,14 @@
-#include "../include/cstr.h"
+#include "cstr.h"
 
-// Macros {{{
+// Macros {{{1
+// -----------
 
 #define ALLC_CSTR_TRUE "true"
 #define ALLC_CSTR_FALSE "false"
 
-// String Inspection {{{
+
+// String Inspection {{{1
+// ----------------------
 
 bool allc_cstr_is_blank(const char *str)
 {
@@ -203,7 +206,9 @@ size_t allc_cstr_find_cstr(const char *str, ssize_t n, const char *sub)
     return n == 0 ? p - str : length;
 }
 
-// String Manipulation {{{
+
+// String Manipulation {{{1
+// ------------------------
 
 void allc_cstr_remove(char *str, size_t from, size_t to)
 {
@@ -304,14 +309,18 @@ void allc_cstr_replace_cstr(char *str, size_t n, const char *sub, const char *rp
     }
 }
 
-// String Representation {{{
+
+// String Representation {{{1
+// --------------------------
 
 const char *allc_cstr_repr_bool(bool b)
 {
     return b ? ALLC_CSTR_TRUE : ALLC_CSTR_FALSE;
 }
 
-// Other {{{
+
+// Other {{{1
+// ----------
 
 void allc_cstr_copy(const char *from, char *to)
 {

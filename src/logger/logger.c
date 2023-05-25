@@ -1,8 +1,8 @@
-#include "../include/logger.h"
-
+#include "logger.h"
 #include <stdarg.h>
 
-// Logger {{{
+// Logger {{{1
+// -----------
 
 void allc_logger_log(Logger *self, const char *fmt, ...)
 {

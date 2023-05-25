@@ -6,6 +6,8 @@
 ListItem *allc_listitem_new(Allocator allocator, size_t size)
 {
     ListItem *p = allocator.alloc(size + sizeof (ListItem));
+    p->next = NULL;
+    p->prev = NULL;
     p->size = size;
     return p;
 }

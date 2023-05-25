@@ -32,9 +32,13 @@
 #ifndef ALLC_LISTITEM__GUARD
 #define ALLC_LISTITEM__GUARD
 
+// Includes {{{1
+// -------------
+
+#include "../../allocator/allocator.h"
+
 #include <sys/types.h>
 
-#include "../allocator.h"
 
 // List Item {{{1
 // --------------
@@ -53,18 +57,16 @@ typedef struct ListItem {
     unsigned char data[];
 } ListItem;
 
-/**
- * Allocate a new item.
- **/
+/* Allocate a new item. */
 extern ListItem *allc_listitem_new(Allocator allocator, size_t size);
 
-/**
- * Delete the item.
- **/
+/* Delete the item. */
 extern void allc_listitem_del(Allocator allocator, ListItem *p);
 
 /**
  * Jump forward or backward N steps in the linked list.
+ *
+ * If self is NULL then return NULL.
  **/
 extern ListItem *allc_listitem_jump(ListItem *self, ssize_t n);
 
