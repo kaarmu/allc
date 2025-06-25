@@ -10,7 +10,7 @@
  * (Authored by Kaj Munhoz Arfvidsson, 2023)
  **/
 
-#define ALLC_IMPL // During development
+// #define ALLC_IMPL // During development - removed to avoid redefinition
 
 #ifndef ALLC_STRBUF__GUARD
 #define ALLC_STRBUF__GUARD
@@ -155,7 +155,7 @@ struct allc_strbuf_pair_s allc_strbuf_split_on_char(StrBuf self, ssize_t n, cons
 // ------------------
 
 StrBuf allc_strbuf_new(allc_allocator_t allocator, size_t capacity) {
-  StrBuf self = allocator.alloc(sizeof(struct allc_strbuf_s) + capacity);
+  StrBuf self = allc_allocator_alloc(allocator, sizeof(struct allc_strbuf_s) + capacity);
   *self = (struct allc_strbuf_s){
       .allocator = allocator,
       .capacity = capacity,
@@ -177,14 +177,14 @@ StrBuf allc_strbuf_copy(StrBuf *self) {
   return result;
 }
 
-void allc_strbuf_delete(StrBuf self) { self->allocator.free(self); }
+void allc_strbuf_delete(StrBuf self) { allc_allocator_free(self->allocator, self); }
 
 // Path - Object Modifiers {{{2
 // ----------------------------
 
 void allc_strbuf_grow(StrBuf *self, size_t n) {
   (*self)->capacity += n;
-  *self = (*self)->allocator.realloc((*self), sizeof(struct allc_strbuf_s) + (*self)->capacity);
+  *self = allc_allocator_realloc((*self)->allocator, (*self), sizeof(struct allc_strbuf_s) + (*self)->capacity);
 }
 
 void allc_strbuf_ensure_capacity(StrBuf *self, size_t n) {

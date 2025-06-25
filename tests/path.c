@@ -1,5 +1,6 @@
-#define ALLC_PATH__IMPL
+#define ALLC_IMPL
 
+#include "../dev/allocator.h"
 #include "../dev/path.h"
 #include "../dev/macro.h"
 

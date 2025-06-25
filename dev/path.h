@@ -15,7 +15,7 @@ Authored by Kaj Munhoz Arfvidsson, 2023.
 
 ***/
 
-#define ALLC_IMPL // During development
+// #define ALLC_IMPL // During development - removed to avoid redefinition
 
 #ifdef ALLC_IMPL
 #   define ALLC_PATH_IMPL

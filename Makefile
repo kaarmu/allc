@@ -25,13 +25,14 @@ deps = $(sort $(foreach thing,$1,${$(thing)_deps}))
 ## add NAMES...
 add = $(sort $1 $(call deps,$1))
 
-allocator_deps =
-cstr_deps =
+types_deps =
+allocator_deps = $(call add,types)
+cstr_deps = $(call add,types)
 strbuf_deps = $(call add,allocator cstr)
 path_deps = strbuf
 
-allc_deps = $(call add,allocator cstr strbuf path)
-tests_deps = $(call add,cstr strbuf)
+allc_deps = $(call add,types allocator cstr strbuf path)
+tests_deps = $(call add,types cstr strbuf)
 
 define PROGRAM_build =
 build_$1: ${OBJ_DIR}/$1.o build_deps_for_$1
