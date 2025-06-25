@@ -1,5 +1,5 @@
-#include "../src/macro.h"
-#include "../src/cstr.h"
+#include "../dev/macro.h"
+#include "../dev/cstr.h"
 
 void allc_cstr_capitalize(char *str);
 void allc_cstr_capitalize_all(char *str);

@@ -1,5 +1,5 @@
-#include "../src/strbuf.h"
-#include "../src/macro.h"
+#include "../dev/strbuf.h"
+#include "../dev/macro.h"
 
 void test__allc_strbuf_is_equal(allc_allocator_t allocator) {
     printf("\n[%s]\n", __func__);
