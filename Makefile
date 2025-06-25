@@ -1,5 +1,5 @@
-CFLAGS=-std=c23 -g -Wall -Wextra -Wunused-result
-SRC_DIR=src
+CFLAGS=-std=c2x -g -Wall -Wextra -Wunused-result
+SRC_DIR=dev
 TESTS_DIR=tests
 
 PROJ_DIR=${shell pwd}
@@ -16,7 +16,8 @@ ${BIN_DIR}:
 sandwich = $(addprefix $1,$(addsuffix $3,$2))
 
 ## objs NAMES...
-objs = $(sort $(call sandwich,${OBJ_DIR}/,$1,.o))
+# Only include objects for modules that have corresponding source files
+objs = $(sort $(foreach m,$1,$(if $(wildcard ${SRC_DIR}/$(m).c),${OBJ_DIR}/$(m).o)))
 
 ## deps NAMES...
 deps = $(sort $(foreach thing,$1,${$(thing)_deps}))
@@ -44,8 +45,8 @@ $(eval $(call PROGRAM_build,tests))
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c ${SRC_DIR}/%.h | ${OBJ_DIR}
 	cc ${CFLAGS} $< -c -o $@
 
-${BIN_DIR}/test_%: ${TESTS_DIR}/%.c build_% build_deps_for_tests | ${BIN_DIR}
-	cc ${CFLAGS} $< $(call objs,$* $(call deps,$* tests)) -o $@
+${BIN_DIR}/test_%: ${TESTS_DIR}/%.c $(call objs,$(call deps,$* tests)) | ${BIN_DIR}
+	cc ${CFLAGS} $< $(call objs,$(call deps,$* tests)) -o $@
 
 test_%: ${BIN_DIR}/test_% ; $<
 

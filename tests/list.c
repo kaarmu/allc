@@ -1,5 +1,5 @@
 
-#include "../src/list.h"
+#include "../dev/list.h"
 #include <stdio.h>
 
 #define PRINT_INFO(list) printf("\n>length=%lu\n\n", (list)->length)

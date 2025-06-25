@@ -93,9 +93,9 @@ Path allc_path_to_absolute_path(Path self);
 
 Path allc_path_to_dirname_path(Path self);
 
-StrBuf allc_path_to_basename_strbuf(Path self); // TODO
+StrBuf allc_path_to_basename_strbuf(Path self);
 
-StrBuf allc_path_to_suffix_strbuf(Path self); // TODO
+StrBuf allc_path_to_suffix_strbuf(Path self);
 
 // Path - Boolean Statements {{{2
 // ------------------------------
@@ -127,6 +127,7 @@ size_t allc_path_count_parts(Path *self);
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // Macros {{{1
@@ -319,9 +320,54 @@ Path allc_path_to_dirname_path(Path self)
 
         size_t i = allc_cstr_find_cstr(self->buf, -1, ALLC_PATH_SEP);
         allc_cstr_shift_left(self->buf + i, self->length - i);
+
         self->length = i;
         return self;
     }
+}
+
+StrBuf allc_path_to_basename_strbuf(Path self)
+{
+    char sep = ALLC_PATH_SEP[0];
+    size_t end = self->length;
+    while (0 < end && self->buf[end - 1] == sep)
+    {
+        end -= 1;
+    }
+    size_t start = end;
+    while (0 < start && self->buf[start - 1] != sep)
+    {
+        start -= 1;
+    }
+    size_t len = end - start;
+    StrBuf result = allc_strbuf_new(self->allocator, len + 1);
+    memcpy(result->buf, self->buf + start, len);
+    result->buf[len] = '\0';
+    result->length = len;
+    return result;
+}
+
+StrBuf allc_path_to_suffix_strbuf(Path self)
+{
+    StrBuf base = allc_path_to_basename_strbuf(self);
+    size_t idx = allc_cstr_find_char(base->buf, -1, '.');
+    StrBuf result;
+    if (idx == base->length || idx == 0)
+    {
+        result = allc_strbuf_new(base->allocator, 1);
+        result->buf[0] = '\0';
+        result->length = 0;
+    }
+    else
+    {
+        size_t len = base->length - idx - 1;
+        result = allc_strbuf_new(base->allocator, len + 1);
+        memcpy(result->buf, base->buf + idx + 1, len);
+        result->buf[len] = '\0';
+        result->length = len;
+    }
+    allc_strbuf_delete(base);
+    return result;
 }
 
 // Path - Boolean Statements {{{2

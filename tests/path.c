@@ -1,7 +1,7 @@
 #define ALLC_PATH__IMPL
 
-#include "../src/path.h"
-#include "../src/macro.h"
+#include "../dev/path.h"
+#include "../dev/macro.h"
 
 void test__new(allc_allocator_t allocator)
 {
@@ -222,6 +222,54 @@ void test__allc_path_extend_path(allc_allocator_t allocator)
   allc_path_delete(p2);
 }
 
+void test__allc_path_to_basename_strbuf(allc_allocator_t allocator)
+{
+  printf("\n[%s]\n", __func__);
+
+  Path p = allc_path_new(allocator);
+
+  allc_path_set_cstr(&p, "/home/user/file.txt");
+  StrBuf base = allc_path_to_basename_strbuf(p);
+  ALLC_TEST_ANY("file.txt", "%s", base->buf);
+  allc_strbuf_delete(base);
+
+  allc_path_set_cstr(&p, "/home/user/");
+  base = allc_path_to_basename_strbuf(p);
+  ALLC_TEST_ANY("user", "%s", base->buf);
+  allc_strbuf_delete(base);
+
+  allc_path_set_cstr(&p, "plainname");
+  base = allc_path_to_basename_strbuf(p);
+  ALLC_TEST_ANY("plainname", "%s", base->buf);
+  allc_strbuf_delete(base);
+
+  allc_path_delete(p);
+}
+
+void test__allc_path_to_suffix_strbuf(allc_allocator_t allocator)
+{
+  printf("\n[%s]\n", __func__);
+
+  Path p = allc_path_new(allocator);
+
+  allc_path_set_cstr(&p, "/tmp/archive.tar.gz");
+  StrBuf suf = allc_path_to_suffix_strbuf(p);
+  ALLC_TEST_ANY("gz", "%s", suf->buf);
+  allc_strbuf_delete(suf);
+
+  allc_path_set_cstr(&p, "noext");
+  suf = allc_path_to_suffix_strbuf(p);
+  ALLC_TEST_ANY("", "%s", suf->buf);
+  allc_strbuf_delete(suf);
+
+  allc_path_set_cstr(&p, ".hidden");
+  suf = allc_path_to_suffix_strbuf(p);
+  ALLC_TEST_ANY("", "%s", suf->buf);
+  allc_strbuf_delete(suf);
+
+  allc_path_delete(p);
+}
+
 void test__allc_path_to_absolute_path(allc_allocator_t allocator) {
     printf("\n[%s]\n", __func__);
 
@@ -259,5 +307,7 @@ int main()
   test__allc_path_count_parts(allocator);
   test__allc_path_to_dirname_path(allocator);
   test__allc_path_extend_path(allocator);
+  test__allc_path_to_basename_strbuf(allocator);
+  test__allc_path_to_suffix_strbuf(allocator);
   test__allc_path_to_absolute_path(allocator);
 }
