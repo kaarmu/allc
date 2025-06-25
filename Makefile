@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -g -Wall -Wextra -Wunused-result
+CFLAGS=-std=c23 -g -Wall -Wextra -Wunused-result
 SRC_DIR=src
 TESTS_DIR=tests
 
