@@ -7,7 +7,7 @@
 /* Split strbuf into a list of strbuf on whitespace characters. */
 List allc_strbuf_split_space(StrBuf *self)
 {
-    Allocator allocator = allc_allocator();
+    allc_allocator_t allocator = allc_allocator();
     List list = allc_list_new(allocator);
     StrBuf temp = allc_strbuf_new(allocator);
     StrBuf *left = &temp, *right = self;
@@ -25,7 +25,7 @@ List allc_strbuf_split_space(StrBuf *self)
 
 Builder allc_builder_new()
 {
-    Allocator allocator = allc_allocator();
+    allc_allocator_t allocator = allc_allocator();
     Logger logger = {
         .stream = stderr,
         .allocator = allocator,

@@ -1,0 +1,670 @@
+/***
+
+C-style strings
+===============
+
+Description
+-----------
+
+Options
+-------
+
+Authored by Kaj Munhoz Arfvidsson, 2023.
+
+***/
+
+#ifndef ALLC_CSTR_GUARD
+#define ALLC_CSTR_GUARD
+
+// Includes {{{1
+// =============
+
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
+#include <sys/types.h>
+
+
+// Macros {{{1
+// ===========
+
+#ifdef ALLC_IMPL
+#define ALLC_CSTR_IMPL
+#endif
+
+
+// String {{{1
+// ===========
+
+typedef const char *String;
+
+typedef char *CharArray;
+
+/* Copy entire C-style string `from` to `to`. */
+void allc_cstr_copy(String from, CharArray to);
+
+/* Copy at most `n` characters from C-style string `from` to `to`. */
+void allc_cstr_copy_n(String from, size_t n, CharArray to);
+
+
+// String - Inspection {{{2
+// ------------------------
+
+/* Test that string contains only space or tab characters. */
+bool allc_cstr_is_blank(String str);
+
+/**
+ * Test that string contains only characters in '0'..'9'.
+ *
+ * Returns false on empty string
+ **/
+bool allc_cstr_is_digit(String str);
+
+/**
+ * Test that string contains only characters in 'A'..'Z'.
+ *
+ * Returns false on empty string
+ **/
+bool allc_cstr_is_upper(String str);
+
+/* Test that string contains only characters in 'a'..'z'. */
+bool allc_cstr_is_lower(String str);
+
+/* Test that string contains only characters in 'A'..'Z' or 'a'..'z'. */
+bool allc_cstr_is_alpha(String str);
+
+/**
+ * Test that string contains only characters in '0'..'9', 'A'..'Z' or
+ * 'a'..'z'.
+ **/
+bool allc_cstr_is_alnum(String str);
+
+/**
+ * Test that string contains only characters '0' or '1'.
+ *
+ * Returns false on empty string
+ **/
+bool allc_cstr_is_bin(String str);
+
+/**
+ * Test that string contains only characters in '0'..'7'.
+ *
+ * Returns false on empty string
+ **/
+bool allc_cstr_is_octo(String str);
+
+/**
+ * Test that string contains only characters in '0'..'9', 'a'..'f' or 'A'..'F'.
+ *
+ * Returns false on empty string
+ **/
+bool allc_cstr_is_hexa(String str);
+
+/* Test that the two strings are equal. */
+bool allc_cstr_is_equal(String str1, String str2);
+
+/**
+ * Test that string starts with substring.
+ *
+ * If substring is empty, return true.
+ **/
+bool allc_cstr_is_starting_with(String str, String sub);
+
+/**
+ * Test that string starts with substring.
+ *
+ * If substring is empty, return true.
+ **/
+bool allc_cstr_is_ending_with(String str, String sub);
+
+/**
+ * Test that string contains substring.
+ **/
+bool allc_cstr_is_containing(String str, String sub);
+
+/**
+ * Test that string is empty.
+ *
+ * A string is empty when the first character is '\0'.
+ **/
+bool allc_cstr_is_empty(String str);
+
+/**
+ * Return length of string.
+ *
+ * Length does not include the null terminator.
+ **/
+size_t allc_cstr_length(String str);
+
+/**
+ * Find the index of the first occurrence of a blank character in string.
+ *
+ * If a blank character cannot be found, the string length is returned.
+ **/
+size_t allc_cstr_find_blank(String str);
+
+/**
+ * Find the index of the `n`th occurrence of character `c` in string.
+ *
+ * If `n` is zero, return 0.
+ * If the character cannot be found, return the string length.
+ **/
+size_t allc_cstr_find_char(String str, ssize_t n, const char chr);
+
+/**
+ * Find the index of the `n`th occurence of substring `sub` in string.
+ *
+ * If `n` is zero, return 0.
+ * If the character cannot be found, the string length is returned.
+ **/
+size_t allc_cstr_find_cstr(String str, ssize_t n, String sub);
+
+// String - Manipulation {{{2
+// --------------------------
+
+/**
+ * Remove chracters between index `from` up to, but not including, index
+ * `to`.
+ **/
+void allc_cstr_remove(CharArray str, size_t from, size_t to);
+
+/* Remove a known suffix. */
+void allc_cstr_remove_suffix(CharArray str, String suffix);
+
+/* Remove a known prefix. */
+void allc_cstr_remove_prefix(CharArray str, String prefix);
+
+/**
+ * Remove all blank characters that begin the string.
+ *
+ * Returns the number of characters that were removed.
+ **/
+size_t allc_cstr_strip_left_blank(CharArray str);
+
+/**
+ * Remove all blank characters that end the string.
+ *
+ * Returns the number of characters that were removed.
+ **/
+size_t allc_cstr_strip_right_blank(CharArray str);
+
+/**
+ * Remove all blank characters at both beginning and end of the string.
+ *
+ * Returns the number of characters that were removed.
+ **/
+size_t allc_cstr_strip_blank(CharArray str_buf);
+
+/**
+ * Left shift string.
+ *
+ * If `n` is zero, do nothing.
+ * If `n` is greater than string length, remove everything.
+ **/
+void allc_cstr_shift_left(CharArray str, size_t n);
+
+/**
+ * Right shift string.
+ *
+ * If `n` is zero, do nothing.
+ * If `n` is greater than string length, remove everything.
+ **/
+void allc_cstr_shift_right(CharArray str, size_t n);
+
+/**
+ * Replace the first `n` characters matching `chr` in a string.
+ *
+ * If the character cannot be found, do nothing.
+ **/
+void allc_cstr_replace_char(CharArray str, size_t n, const char chr,
+                            const char rpl);
+
+/**
+ * Replace all characters matching `chr` in a string.
+ *
+ * If the character cannot be found, do nothing.
+ **/
+void allc_cstr_replace_all_char(CharArray str, const char chr, const char rpl);
+
+/**
+ * Replace the first `n` substrings matching `sub` in a string.
+ *
+ * If the new substring is larger than the old, do nothing.
+ * If the old substring is larger than the new, replace as much as possible.
+ * If the substring cannot be found, do nothing.
+ **/
+void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl);
+
+/**
+ * Replace all substrings matching `sub` in a string.
+ *
+ * If the new substring is larger than the old, do nothing.
+ * If the old substring is larger than the new, replace as much as possible.
+ * If the substring cannot be found, do nothing.
+ **/
+void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl);
+
+// String - Representations {{{2
+// -----------------------------
+
+String allc_cstr_repr_bool(bool b);
+
+// }}}1
+
+#endif // ALLC_CSTR_GUARD
+
+/****************************************************************************/
+
+#ifndef ALLC_CSTR_IMPL__GUARD
+#define ALLC_CSTR_IMPL__GUARD
+#else
+#undef ALLC_CSTR_IMPL
+#endif
+
+
+#ifdef ALLC_CSTR_IMPL
+
+// String Inspection {{{1
+// ======================
+
+bool allc_cstr_is_blank(String str)
+{
+  bool result = true;
+  for (String p = str; *p != 0; ++p)
+  {
+    switch (*p)
+    {
+    case ' ':
+    case '\t':
+      continue;
+    default:
+      result = false;
+    }
+  }
+  return result;
+}
+
+bool allc_cstr_is_digit(String str)
+{
+  bool result = *str != 0;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result = result && (('0' <= chr && chr <= '9'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_upper(String str)
+{
+  bool result = *str != 0;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result = result && (('A' <= chr && chr <= 'Z'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_lower(String str)
+{
+  bool result = true;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result = result && (('a' <= chr && chr <= 'z'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_alpha(String str)
+{
+  bool result = true;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result =
+        result && (('A' <= chr && chr <= 'Z') || ('a' <= chr && chr <= 'z'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_alnum(String str)
+{
+  bool result = true;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result =
+        result && (('0' <= chr && chr <= '9') || ('A' <= chr && chr <= 'Z') ||
+                   ('a' <= chr && chr <= 'z'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_bin(String str)
+{
+  bool result = *str != 0;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result = result && ((chr == '0' || chr == '1'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_octo(String str)
+{
+  bool result = *str != 0;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result = result && (('0' <= chr && chr <= '7'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_hexa(String str)
+{
+  bool result = *str != 0;
+  for (String p = str; *p != 0; ++p)
+  {
+    char chr = *p;
+    result =
+        result && (('0' <= chr && chr <= '9') || ('A' <= chr && chr <= 'F') ||
+                   ('a' <= chr && chr <= 'f'));
+  }
+  return result;
+}
+
+bool allc_cstr_is_equal(String str1, String str2)
+{
+  String p = str1, q = str2;
+  for (; *p != 0 && *q != 0; ++p, ++q)
+  {
+    if (*p != *q)
+      return false;
+  }
+  return *p == *q;
+}
+
+bool allc_cstr_is_starting_with(String str, String sub)
+{
+  String p = str, q = sub;
+  for (; *p != 0 && *q != 0; ++p, ++q)
+  {
+    if (*p != *q)
+      return false;
+  }
+  return true;
+}
+
+bool allc_cstr_is_ending_with(String str, String sub)
+{
+  size_t str_length = allc_cstr_length(str), sub_length = allc_cstr_length(sub);
+  String p = str + str_length - sub_length;
+  return allc_cstr_is_equal(p, sub);
+}
+
+bool allc_cstr_is_containing(String str, String sub)
+{
+  size_t str_length = allc_cstr_length(str), sub_length = allc_cstr_length(sub);
+  if (sub_length == 0)
+    return true;
+  for (size_t n = 0; n < str_length - sub_length + 1; ++n)
+    if (allc_cstr_is_starting_with(str + n, sub))
+      return true;
+  return false;
+}
+
+bool allc_cstr_is_empty(String str) { return *str == '\0'; }
+
+size_t allc_cstr_length(String str)
+{
+  String p = str;
+  for (; *p != 0; ++p)
+    ;
+  return (size_t)(p - str);
+}
+
+size_t allc_cstr_find_blank(String str)
+{
+  String p = str;
+  while (*p != 0 && !isblank(*p))
+  {
+    ++p;
+  }
+  return p - str;
+}
+
+size_t allc_cstr_find_char(String str, ssize_t n, const char chr)
+{
+  String p = str;
+  if (0 < n)
+  {
+    do
+    {
+      for (; *p != 0 && *p != chr; ++p)
+        ;
+    } while (--n > 0 && *p != 0 && *(++p) != 0);
+  }
+  else
+  {
+    for (; *p != 0; ++p)
+      ;
+    do
+    {
+      --p;
+      for (; p != str && *p != chr; --p)
+        ;
+    } while (++n < 0 && p != str);
+  }
+  return p - str;
+}
+
+size_t allc_cstr_find_cstr(String str, ssize_t n, String sub)
+{
+  size_t length = allc_cstr_length(str);
+  if (*sub == 0)
+    return length;
+  String p, q;
+  int inc;
+  if (n < 0)
+  {
+    p = str + length - 1;
+    q = str - 1;
+    inc = +1;
+  }
+  else
+  {
+    p = str;
+    q = str + length;
+    inc = -1;
+  }
+  while (p != q && n != 0)
+  {
+    if (allc_cstr_is_starting_with(p, sub))
+    {
+      n += inc;
+    }
+    else
+    {
+      p += -inc;
+    }
+  }
+  return n == 0 ? (size_t)(p - str) : length;
+}
+
+// String Manipulation {{{1
+// ------------------------
+
+void allc_cstr_remove(CharArray str, size_t from, size_t to)
+{
+  allc_cstr_shift_left(str + from, to - from);
+}
+
+void allc_cstr_remove_suffix(CharArray str, String suffix)
+{
+  if (allc_cstr_is_ending_with(str, suffix))
+  {
+    size_t suffix_length = allc_cstr_length(suffix);
+    size_t i = allc_cstr_find_cstr(str, -1, suffix);
+    memset(str + i, 0, suffix_length);
+  }
+}
+
+void allc_cstr_remove_prefix(CharArray str, String prefix)
+{
+  if (allc_cstr_is_starting_with(str, prefix))
+  {
+    size_t prefix_length = allc_cstr_length(prefix);
+    allc_cstr_shift_left(str, prefix_length);
+  }
+}
+
+size_t allc_cstr_strip_left_blank(CharArray str)
+{
+  String p = str;
+  for (; *p != 0; ++p)
+  {
+    if (isblank(*p))
+    {
+      continue;
+    }
+    allc_cstr_remove(str, 0, p - str);
+    break;
+  }
+  return p - str;
+}
+
+size_t allc_cstr_strip_right_blank(CharArray str)
+{
+  size_t length = allc_cstr_length(str);
+  String p = str + length - 1;
+  for (; p != str - 1; --p)
+  {
+    if (isblank(*p))
+    {
+      continue;
+    }
+    allc_cstr_remove(str, p + 1 - str, length);
+    break;
+  }
+  return length - (p + 1 - str);
+}
+
+size_t allc_cstr_strip_blank(CharArray str_buf)
+{
+  size_t n = allc_cstr_strip_left_blank(str_buf);
+  size_t m = allc_cstr_strip_right_blank(str_buf);
+  return n + m;
+}
+
+void allc_cstr_shift_left(CharArray str, size_t n)
+{
+  size_t length = allc_cstr_length(str);
+  CharArray p = str;
+  for (; p + n < str + length; ++p)
+  {
+    *p = *(p + n);
+  }
+  if (p < str + length)
+    memset(p, 0, str + length - p);
+}
+
+void allc_cstr_shift_right(CharArray str, size_t n)
+{
+  size_t length = allc_cstr_length(str);
+  CharArray end = str + length;
+  for (CharArray p = end - n; p < end; ++p)
+  {
+    *p = 0;
+  }
+}
+
+void allc_cstr_replace_char(CharArray str, size_t n, const char chr, const char rpl)
+{
+  size_t i = 0;
+  while (n != 0)
+  {
+    i = allc_cstr_find_char(str, 1, chr);
+    if (str[i] == 0)
+      return; // if chr not found then i = length wich implies str[i] = 0.
+    str[i] = rpl;
+    n -= 1;
+    i += 1;
+  }
+}
+
+void allc_cstr_replace_all_char(CharArray str, const char chr, const char rpl)
+{
+  size_t i = 0;
+  while (true)
+  {
+    i += allc_cstr_find_char(str + i, 1, chr);
+    if (str[i] == 0)
+      return; // if chr not found then i = length wich implies str[i] = 0.
+    str[i] = rpl;
+    i += 1;
+  }
+}
+
+void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl)
+{
+  size_t i = 0,
+         sub_length = allc_cstr_length(sub),
+         rpl_length = allc_cstr_length(rpl);
+  while (n != 0)
+  {
+    i = allc_cstr_find_cstr(str, 1, sub);
+    if (str[i] == 0)
+      return; // if sub not found then i = length wich implies str[i] = 0.
+    allc_cstr_copy_n(rpl, rpl_length, str + i);
+    allc_cstr_shift_left(str + i + rpl_length, sub_length - rpl_length);
+    n -= 1;
+    i += rpl_length;
+  }
+}
+
+void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl)
+{
+  size_t i = 0, 
+         sub_length = allc_cstr_length(sub),
+         rpl_length = allc_cstr_length(rpl);
+  while (true)
+  {
+    i += allc_cstr_find_cstr(str + i, 1, sub);
+    if (str[i] == 0)
+      return; // if sub not found then i = length wich implies str[i] = 0.
+    allc_cstr_copy_n(rpl, rpl_length, str + i);
+    allc_cstr_shift_left(str + i + rpl_length, sub_length - rpl_length);
+    i += rpl_length;
+  }
+}
+
+// String Representation {{{1
+// --------------------------
+
+String allc_cstr_repr_bool(bool b) { return b ? "true" : "false"; }
+
+String allc_cstr_repr_test_result(bool b)
+{
+  return b ? "passed" : "failed";
+}
+
+// Other {{{1
+// ----------
+
+void allc_cstr_copy(String from, CharArray to) { strcpy(to, from); }
+
+void allc_cstr_copy_n(String from, size_t n, CharArray to)
+{
+  strncpy(to, from, n);
+}
+
+// }}}1
+
+#endif // ALLC_CSTR_IMPL
+
+// vim: ai et ts=4 sw=0 fdl=99 fdm=marker
