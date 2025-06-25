@@ -227,10 +227,12 @@
 ### Build System
 
 #### 28. **builder.h** - Meta-Build System
-- Project-specific build system creation
-- Command execution with proper error handling
-- Process management and monitoring
-- Logging integration for build processes
+- Using the same language (C) for both development and building
+- Potential code reuse between the project and its build system
+- Simple, transparent build process without external dependencies
+- Idea originates from tsoding's nob.h:
+
+    The idea is that you should not need anything but a C compiler to build a C project. No make, no cmake, no shell, no cmd, no PowerShell etc. Only C compiler. So with the C compiler you bootstrap your build system and then you use the build system to build everything else.
 
 ## File Organization
 
@@ -252,54 +254,54 @@ allc/
 ### Development Phases
 
 #### Phase 1: Core Infrastructure ✅
-- Type system foundation (`types.h`)
-- Memory allocator abstraction (`allocator.h`)
-- Basic string operations (`cstr.h`, `strbuf.h`)
-- Fundamental data structures (`list.h`, `array.h`)
-- Essential utilities (`macro.h`, `logger.h`)
+- [ ] Type system foundation (`types.h`)
+- [ ] Memory allocator abstraction (`allocator.h`)
+- [ ] Basic string operations (`cstr.h`, `strbuf.h`)
+- [ ] Fundamental data structures (`list.h`, `array.h`)
+- [ ] Essential utilities (`macro.h`, `logger.h`)
 
 #### Phase 2: Standard Data Structures 🔄
-- Hash tables and maps (`hashmap.h`)
-- Sets and collections (`set.h`)
-- Queues and stacks (`queue.h`)
-- Priority queues and heaps (`heap.h`)
-- Tree data structures (`tree.h`)
+- [ ] Hash tables and maps (`hashmap.h`)
+- [ ] Sets and collections (`set.h`)
+- [ ] Queues and stacks (`queue.h`)
+- [ ] Priority queues and heaps (`heap.h`)
+- [ ] Tree data structures (`tree.h`)
 
 #### Phase 3: Mathematical and Utility Operations 📋
-- Mathematical functions (`math.h`)
-- Random number generation (`random.h`)
-- Date and time operations (`datetime.h`)
-- Unicode and text processing (`unicode.h`)
-- Basic cryptographic functions (`crypto.h`)
+- [ ] Mathematical functions (`math.h`)
+- [ ] Random number generation (`random.h`)
+- [ ] Date and time operations (`datetime.h`)
+- [ ] Unicode and text processing (`unicode.h`)
+- [ ] Basic cryptographic functions (`crypto.h`)
 
 #### Phase 4: System Integration 🔄
-- File system operations (`os/file.h`, `os/directory.h`)
-- Process management (`os/process.h`)
-- Network operations (`os/network.h`)
-- Environment handling (`os/environ.h`)
-- Build system utilities (`builder.h`)
+- [ ] File system operations (`os/file.h`, `os/directory.h`)
+- [ ] Process management (`os/process.h`)
+- [ ] Network operations (`os/network.h`)
+- [ ] Environment handling (`os/environ.h`)
+- [ ] Build system utilities (`builder.h`)
 
 #### Phase 5: Input/Output and Serialization 📋
-- JSON processing (`json.h`)
-- CSV handling (`csv.h`)
-- Configuration files (`config.h`)
-- Text encoding and decoding (`encoding.h`)
+- [ ] JSON processing (`json.h`)
+- [ ] CSV handling (`csv.h`)
+- [ ] Configuration files (`config.h`)
+- [ ] Text encoding and decoding (`encoding.h`)
 
 #### Phase 6: Concurrency Support 📋
-- Threading primitives (`thread.h`)
-- Synchronization mechanisms (`sync.h`)
-- Thread pool management (`threadpool.h`)
+- [ ] Threading primitives (`thread.h`)
+- [ ] Synchronization mechanisms (`sync.h`)
+- [ ] Thread pool management (`threadpool.h`)
 
 #### Phase 7: Advanced Features 📋
-- Regular expressions (`regex.h`)
-- Iterator abstractions (`iterator.h`)
-- Advanced path operations (`path.h`)
+- [ ] Regular expressions (`regex.h`)
+- [ ] Iterator abstractions (`iterator.h`)
+- [ ] Advanced path operations (`path.h`)
 
 #### Phase 8: Stabilization and Optimization 📋
-- Comprehensive testing across all modules
-- Performance optimization and profiling
-- Documentation completion and examples
-- API finalization and stability guarantees
+- [ ] Comprehensive testing across all modules
+- [ ] Performance optimization and profiling
+- [ ] Documentation completion and examples
+- [ ] API finalization and stability guarantees
 
 ### Testing Strategy
 - Unit tests for each module in `tests/` directory
@@ -392,8 +394,6 @@ To serve as a comprehensive alternative to system-provided standard libraries, *
 - **Zero Dependencies**: No external library requirements beyond system calls
 
 ### Target Use Cases
-- **Embedded Systems**: Resource-constrained environments requiring precise memory control
-- **Game Development**: Performance-critical applications with custom memory management
 - **System Programming**: Low-level applications requiring portable system abstractions
 - **Library Development**: Building higher-level libraries with consistent foundations
 - **Educational Projects**: Learning C programming with well-documented, readable code
