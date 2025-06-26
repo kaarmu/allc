@@ -1,5 +1,5 @@
 /**
- *  String buffer.
+ *  allc_string_t buffer.
  *
  *  Description
  *  ===========
@@ -52,7 +52,7 @@ struct allc_strbuf_pair_s
 StrBuf allc_strbuf_new(allc_allocator_t allocator, size_t capacity);
 
 /* Create a new string buffer from C-style string. */
-StrBuf allc_strbuf_new_from_cstr(allc_allocator_t allocator, String str);
+StrBuf allc_strbuf_new_from_cstr(allc_allocator_t allocator, allc_string_t str);
 
 /* Create a new string buffer that copies from `strbuf`. */
 StrBuf allc_strbuf_copy(StrBuf *self);
@@ -65,7 +65,7 @@ void allc_strbuf_delete(StrBuf self);
 
 bool allc_strbuf_is_equal(StrBuf *self, StrBuf *other);
 
-bool allc_strbuf_is_equal_cstr(StrBuf *self, String other);
+bool allc_strbuf_is_equal_cstr(StrBuf *self, allc_string_t other);
 
 // StrBuf - Object Modifiers {{{2
 // ------------------------------
@@ -83,13 +83,13 @@ void allc_strbuf_ensure_capacity(StrBuf *self, size_t n);
 void allc_strbuf_clear(StrBuf *self);
 
 /* Set string buffer content to be result of formatting `fmt`. */
-void allc_strbuf_set_fmt(StrBuf *self, String fmt, ...);
+void allc_strbuf_set_fmt(StrBuf *self, allc_string_t fmt, ...);
 
 /* Set string buffer content to be exactly C-style string `str`. */
-void allc_strbuf_set_cstr(StrBuf *self, String str);
+void allc_strbuf_set_cstr(StrBuf *self, allc_string_t str);
 
 /* Append a copy of the C-style string `str` to the end of the string buffer. */
-void allc_strbuf_append_cstr(StrBuf *strbuf, String str);
+void allc_strbuf_append_cstr(StrBuf *strbuf, allc_string_t str);
 
 /**
  * Insert a copy of the C-style string `str` at the index `pos` of the string
@@ -102,7 +102,7 @@ void allc_strbuf_append_cstr(StrBuf *strbuf, String str);
  * Any existing text starting at `pos` is right shifted by the new strings
  * length using `allc_cstr_shift_right`.
  **/
-void allc_strbuf_insert_cstr(StrBuf *self, ssize_t pos, String str);
+void allc_strbuf_insert_cstr(StrBuf *self, ssize_t pos, allc_string_t str);
 
 /* Strips string buffer using `cstr_strip`. */
 void allc_strbuf_strip_blank(StrBuf *self);
@@ -151,7 +151,7 @@ struct allc_strbuf_pair_s allc_strbuf_split_on_char(StrBuf self, ssize_t n, cons
 #include <string.h>
 
 
-// String Buffer {{{1
+// allc_string_t Buffer {{{1
 // ------------------
 
 StrBuf allc_strbuf_new(allc_allocator_t allocator, size_t capacity) {
@@ -168,7 +168,7 @@ StrBuf allc_strbuf_new(allc_allocator_t allocator, size_t capacity) {
   return self;
 }
 
-StrBuf allc_strbuf_new_from_cstr(allc_allocator_t allocator, String str) {
+StrBuf allc_strbuf_new_from_cstr(allc_allocator_t allocator, allc_string_t str) {
   StrBuf self = allc_strbuf_new(allocator, 0);
   allc_strbuf_append_cstr(&self, str);
   return self;
@@ -202,7 +202,7 @@ void allc_strbuf_clear(StrBuf *self) {
   (*self)->length = 0;
 }
 
-void allc_strbuf_set_fmt(StrBuf *self, String fmt, ...) {
+void allc_strbuf_set_fmt(StrBuf *self, allc_string_t fmt, ...) {
   va_list ap1, ap2;
   va_start(ap1, fmt);
   va_copy(ap2, ap1);
@@ -214,7 +214,7 @@ void allc_strbuf_set_fmt(StrBuf *self, String fmt, ...) {
   (*self)->length = n;
 }
 
-void allc_strbuf_set_cstr(StrBuf *self, String str) {
+void allc_strbuf_set_cstr(StrBuf *self, allc_string_t str) {
   size_t length = allc_cstr_length(str);
   allc_strbuf_ensure_capacity(self, length + 1);
   allc_strbuf_clear(self);
@@ -222,7 +222,7 @@ void allc_strbuf_set_cstr(StrBuf *self, String str) {
   (*self)->length = length;
 }
 
-void allc_strbuf_append_cstr(StrBuf *self, String other) {
+void allc_strbuf_append_cstr(StrBuf *self, allc_string_t other) {
   size_t other_length = allc_cstr_length(other);
   allc_strbuf_ensure_capacity(self, (*self)->length + other_length + 1);
   memcpy((*self)->buf + (*self)->length, other,
@@ -230,7 +230,7 @@ void allc_strbuf_append_cstr(StrBuf *self, String other) {
   (*self)->length += other_length;
 }
 
-void allc_strbuf_insert_cstr(StrBuf *self, ssize_t pos, String str) {
+void allc_strbuf_insert_cstr(StrBuf *self, ssize_t pos, allc_string_t str) {
   size_t str_length = allc_cstr_length(str);
   size_t buffer_length = (*self)->length;
   size_t insert_pos;
@@ -315,7 +315,7 @@ bool allc_strbuf_is_equal(StrBuf *self, StrBuf *other) {
   return allc_cstr_is_equal((*self)->buf, (*other)->buf);
 }
 
-bool allc_strbuf_is_equal_cstr(StrBuf *self, String other) {
+bool allc_strbuf_is_equal_cstr(StrBuf *self, allc_string_t other) {
   return allc_cstr_is_equal((*self)->buf, other);
 }
 

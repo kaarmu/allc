@@ -37,112 +37,111 @@ Authored by Kaj Munhoz Arfvidsson, 2023.
 // String {{{1
 // ===========
 
-typedef const char *String;
-
-typedef char *CharArray;
+typedef const char *allc_string_t;
+typedef char *allc_cstr_t;
 
 /* Copy entire C-style string `from` to `to`. */
-void allc_cstr_copy(String from, CharArray to);
+void allc_cstr_copy(allc_string_t from, allc_cstr_t to);
 
 /* Copy at most `n` characters from C-style string `from` to `to`. */
-void allc_cstr_copy_n(String from, size_t n, CharArray to);
+void allc_cstr_copy_n(allc_string_t from, size_t n, allc_cstr_t to);
 
 
 // String - Inspection {{{2
 // ------------------------
 
 /* Test that string contains only space or tab characters. */
-bool allc_cstr_is_blank(String str);
+bool allc_cstr_is_blank(allc_string_t str);
 
 /**
  * Test that string contains only characters in '0'..'9'.
  *
  * Returns false on empty string
  **/
-bool allc_cstr_is_digit(String str);
+bool allc_cstr_is_digit(allc_string_t str);
 
 /**
  * Test that string contains only characters in 'A'..'Z'.
  *
  * Returns false on empty string
  **/
-bool allc_cstr_is_upper(String str);
+bool allc_cstr_is_upper(allc_string_t str);
 
 /* Test that string contains only characters in 'a'..'z'. */
-bool allc_cstr_is_lower(String str);
+bool allc_cstr_is_lower(allc_string_t str);
 
 /* Test that string contains only characters in 'A'..'Z' or 'a'..'z'. */
-bool allc_cstr_is_alpha(String str);
+bool allc_cstr_is_alpha(allc_string_t str);
 
 /**
  * Test that string contains only characters in '0'..'9', 'A'..'Z' or
  * 'a'..'z'.
  **/
-bool allc_cstr_is_alnum(String str);
+bool allc_cstr_is_alnum(allc_string_t str);
 
 /**
  * Test that string contains only characters '0' or '1'.
  *
  * Returns false on empty string
  **/
-bool allc_cstr_is_bin(String str);
+bool allc_cstr_is_bin(allc_string_t str);
 
 /**
  * Test that string contains only characters in '0'..'7'.
  *
  * Returns false on empty string
  **/
-bool allc_cstr_is_octo(String str);
+bool allc_cstr_is_octo(allc_string_t str);
 
 /**
  * Test that string contains only characters in '0'..'9', 'a'..'f' or 'A'..'F'.
  *
  * Returns false on empty string
  **/
-bool allc_cstr_is_hexa(String str);
+bool allc_cstr_is_hexa(allc_string_t str);
 
 /* Test that the two strings are equal. */
-bool allc_cstr_is_equal(String str1, String str2);
+bool allc_cstr_is_equal(allc_string_t str1, allc_string_t str2);
 
 /**
  * Test that string starts with substring.
  *
  * If substring is empty, return true.
  **/
-bool allc_cstr_is_starting_with(String str, String sub);
+bool allc_cstr_is_starting_with(allc_string_t str, allc_string_t sub);
 
 /**
  * Test that string starts with substring.
  *
  * If substring is empty, return true.
  **/
-bool allc_cstr_is_ending_with(String str, String sub);
+bool allc_cstr_is_ending_with(allc_string_t str, allc_string_t sub);
 
 /**
  * Test that string contains substring.
  **/
-bool allc_cstr_is_containing(String str, String sub);
+bool allc_cstr_is_containing(allc_string_t str, allc_string_t sub);
 
 /**
  * Test that string is empty.
  *
  * A string is empty when the first character is '\0'.
  **/
-bool allc_cstr_is_empty(String str);
+bool allc_cstr_is_empty(allc_string_t str);
 
 /**
  * Return length of string.
  *
  * Length does not include the null terminator.
  **/
-size_t allc_cstr_length(String str);
+size_t allc_cstr_length(allc_string_t str);
 
 /**
  * Find the index of the first occurrence of a blank character in string.
  *
  * If a blank character cannot be found, the string length is returned.
  **/
-size_t allc_cstr_find_blank(String str);
+size_t allc_cstr_find_blank(allc_string_t str);
 
 /**
  * Find the index of the `n`th occurrence of character `c` in string.
@@ -150,7 +149,7 @@ size_t allc_cstr_find_blank(String str);
  * If `n` is zero, return 0.
  * If the character cannot be found, return the string length.
  **/
-size_t allc_cstr_find_char(String str, ssize_t n, const char chr);
+size_t allc_cstr_find_char(allc_string_t str, ssize_t n, const char chr);
 
 /**
  * Find the index of the `n`th occurence of substring `sub` in string.
@@ -158,7 +157,7 @@ size_t allc_cstr_find_char(String str, ssize_t n, const char chr);
  * If `n` is zero, return 0.
  * If the character cannot be found, the string length is returned.
  **/
-size_t allc_cstr_find_cstr(String str, ssize_t n, String sub);
+size_t allc_cstr_find_cstr(allc_string_t str, ssize_t n, allc_string_t sub);
 
 // String - Manipulation {{{2
 // --------------------------
@@ -167,34 +166,34 @@ size_t allc_cstr_find_cstr(String str, ssize_t n, String sub);
  * Remove chracters between index `from` up to, but not including, index
  * `to`.
  **/
-void allc_cstr_remove(CharArray str, size_t from, size_t to);
+void allc_cstr_remove(allc_cstr_t str, size_t from, size_t to);
 
 /* Remove a known suffix. */
-void allc_cstr_remove_suffix(CharArray str, String suffix);
+void allc_cstr_remove_suffix(allc_cstr_t str, allc_string_t suffix);
 
 /* Remove a known prefix. */
-void allc_cstr_remove_prefix(CharArray str, String prefix);
+void allc_cstr_remove_prefix(allc_cstr_t str, allc_string_t prefix);
 
 /**
  * Remove all blank characters that begin the string.
  *
  * Returns the number of characters that were removed.
  **/
-size_t allc_cstr_strip_left_blank(CharArray str);
+size_t allc_cstr_strip_left_blank(allc_cstr_t str);
 
 /**
  * Remove all blank characters that end the string.
  *
  * Returns the number of characters that were removed.
  **/
-size_t allc_cstr_strip_right_blank(CharArray str);
+size_t allc_cstr_strip_right_blank(allc_cstr_t str);
 
 /**
  * Remove all blank characters at both beginning and end of the string.
  *
  * Returns the number of characters that were removed.
  **/
-size_t allc_cstr_strip_blank(CharArray str_buf);
+size_t allc_cstr_strip_blank(allc_cstr_t str_buf);
 
 /**
  * Left shift string.
@@ -202,7 +201,7 @@ size_t allc_cstr_strip_blank(CharArray str_buf);
  * If `n` is zero, do nothing.
  * If `n` is greater than string length, remove everything.
  **/
-void allc_cstr_shift_left(CharArray str, size_t n);
+void allc_cstr_shift_left(allc_cstr_t str, size_t n);
 
 /**
  * Right shift string.
@@ -210,14 +209,14 @@ void allc_cstr_shift_left(CharArray str, size_t n);
  * If `n` is zero, do nothing.
  * If `n` is greater than string length, remove everything.
  **/
-void allc_cstr_shift_right(CharArray str, size_t n);
+void allc_cstr_shift_right(allc_cstr_t str, size_t n);
 
 /**
  * Replace the first `n` characters matching `chr` in a string.
  *
  * If the character cannot be found, do nothing.
  **/
-void allc_cstr_replace_char(CharArray str, size_t n, const char chr,
+void allc_cstr_replace_char(allc_cstr_t str, size_t n, const char chr,
                             const char rpl);
 
 /**
@@ -225,7 +224,7 @@ void allc_cstr_replace_char(CharArray str, size_t n, const char chr,
  *
  * If the character cannot be found, do nothing.
  **/
-void allc_cstr_replace_all_char(CharArray str, const char chr, const char rpl);
+void allc_cstr_replace_all_char(allc_cstr_t str, const char chr, const char rpl);
 
 /**
  * Replace the first `n` substrings matching `sub` in a string.
@@ -234,7 +233,7 @@ void allc_cstr_replace_all_char(CharArray str, const char chr, const char rpl);
  * If the old substring is larger than the new, replace as much as possible.
  * If the substring cannot be found, do nothing.
  **/
-void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl);
+void allc_cstr_replace_cstr(allc_cstr_t str, size_t n, allc_string_t sub, allc_string_t rpl);
 
 /**
  * Replace all substrings matching `sub` in a string.
@@ -243,7 +242,7 @@ void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl);
  * If the old substring is larger than the new, replace as much as possible.
  * If the substring cannot be found, do nothing.
  **/
-void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl);
+void allc_cstr_replace_all_cstr(allc_cstr_t str, allc_string_t sub, allc_string_t rpl);
 
 // String - Case Conversion {{{2
 // -----------------------------
@@ -253,55 +252,55 @@ void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl);
  *
  * If the string is empty, do nothing.
  **/
-void allc_cstr_capitalize(CharArray str);
+void allc_cstr_capitalize(allc_cstr_t str);
 
 /**
  * Capitalize the first character of each word in the string.
  *
  * A word is defined as a sequence of non-blank characters.
  **/
-void allc_cstr_capitalize_all(CharArray str);
+void allc_cstr_capitalize_all(allc_cstr_t str);
 
 /**
  * Convert the first character of the string to lowercase.
  *
  * If the string is empty, do nothing.
  **/
-void allc_cstr_lower(CharArray str);
+void allc_cstr_lower(allc_cstr_t str);
 
 /**
  * Convert all characters in the string to lowercase.
  **/
-void allc_cstr_lower_all(CharArray str);
+void allc_cstr_lower_all(allc_cstr_t str);
 
 /**
  * Convert the first character of the string to uppercase.
  *
  * If the string is empty, do nothing.
  **/
-void allc_cstr_upper(CharArray str);
+void allc_cstr_upper(allc_cstr_t str);
 
 /**
  * Convert all characters in the string to uppercase.
  **/
-void allc_cstr_upper_all(CharArray str);
+void allc_cstr_upper_all(allc_cstr_t str);
 
 /**
  * Swap the case of the first character in the string.
  *
  * If the string is empty, do nothing.
  **/
-void allc_cstr_swap_case(CharArray str);
+void allc_cstr_swap_case(allc_cstr_t str);
 
 /**
  * Swap the case of all characters in the string.
  **/
-void allc_cstr_swap_case_all(CharArray str);
+void allc_cstr_swap_case_all(allc_cstr_t str);
 
 // String - Representations {{{2
 // -----------------------------
 
-String allc_cstr_repr_bool(bool b);
+allc_string_t allc_cstr_repr_bool(bool b);
 
 // }}}1
 
@@ -318,15 +317,15 @@ String allc_cstr_repr_bool(bool b);
 
 #ifdef ALLC_CSTR_IMPL
 
-// String Inspection {{{1
+// allc_string_t Inspection {{{1
 // ======================
 
-bool allc_cstr_is_blank(String str)
+bool allc_cstr_is_blank(allc_string_t str)
 {
   // Empty string is not blank according to tests
   if (*str == '\0') return false;
   
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     switch (*p)
     {
@@ -340,10 +339,10 @@ bool allc_cstr_is_blank(String str)
   return true;
 }
 
-bool allc_cstr_is_digit(String str)
+bool allc_cstr_is_digit(allc_string_t str)
 {
   bool result = *str != 0;
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     result = result && (('0' <= chr && chr <= '9'));
@@ -351,10 +350,10 @@ bool allc_cstr_is_digit(String str)
   return result;
 }
 
-bool allc_cstr_is_upper(String str)
+bool allc_cstr_is_upper(allc_string_t str)
 {
   bool result = *str != 0;
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     result = result && (('A' <= chr && chr <= 'Z'));
@@ -362,12 +361,12 @@ bool allc_cstr_is_upper(String str)
   return result;
 }
 
-bool allc_cstr_is_lower(String str)
+bool allc_cstr_is_lower(allc_string_t str)
 {
   // Empty string returns false according to tests
   if (*str == '\0') return false;
   
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     if (!(chr >= 'a' && chr <= 'z'))
@@ -376,12 +375,12 @@ bool allc_cstr_is_lower(String str)
   return true;
 }
 
-bool allc_cstr_is_alpha(String str)
+bool allc_cstr_is_alpha(allc_string_t str)
 {
   // Empty string returns false according to tests
   if (*str == '\0') return false;
   
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     if (!((chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z')))
@@ -390,12 +389,12 @@ bool allc_cstr_is_alpha(String str)
   return true;
 }
 
-bool allc_cstr_is_alnum(String str)
+bool allc_cstr_is_alnum(allc_string_t str)
 {
   // Empty string returns false according to tests
   if (*str == '\0') return false;
   
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     if (!((chr >= '0' && chr <= '9') || (chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z')))
@@ -404,10 +403,10 @@ bool allc_cstr_is_alnum(String str)
   return true;
 }
 
-bool allc_cstr_is_bin(String str)
+bool allc_cstr_is_bin(allc_string_t str)
 {
   bool result = *str != 0;
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     result = result && ((chr == '0' || chr == '1'));
@@ -415,10 +414,10 @@ bool allc_cstr_is_bin(String str)
   return result;
 }
 
-bool allc_cstr_is_octo(String str)
+bool allc_cstr_is_octo(allc_string_t str)
 {
   bool result = *str != 0;
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     result = result && (('0' <= chr && chr <= '7'));
@@ -426,10 +425,10 @@ bool allc_cstr_is_octo(String str)
   return result;
 }
 
-bool allc_cstr_is_hexa(String str)
+bool allc_cstr_is_hexa(allc_string_t str)
 {
   bool result = *str != 0;
-  for (String p = str; *p != 0; ++p)
+  for (allc_string_t p = str; *p != 0; ++p)
   {
     char chr = *p;
     result =
@@ -439,9 +438,9 @@ bool allc_cstr_is_hexa(String str)
   return result;
 }
 
-bool allc_cstr_is_equal(String str1, String str2)
+bool allc_cstr_is_equal(allc_string_t str1, allc_string_t str2)
 {
-  String p = str1, q = str2;
+  allc_string_t p = str1, q = str2;
   for (; *p != 0 && *q != 0; ++p, ++q)
   {
     if (*p != *q)
@@ -450,9 +449,9 @@ bool allc_cstr_is_equal(String str1, String str2)
   return *p == *q;
 }
 
-bool allc_cstr_is_starting_with(String str, String sub)
+bool allc_cstr_is_starting_with(allc_string_t str, allc_string_t sub)
 {
-  String p = str, q = sub;
+  allc_string_t p = str, q = sub;
   for (; *p != 0 && *q != 0; ++p, ++q)
   {
     if (*p != *q)
@@ -461,14 +460,14 @@ bool allc_cstr_is_starting_with(String str, String sub)
   return true;
 }
 
-bool allc_cstr_is_ending_with(String str, String sub)
+bool allc_cstr_is_ending_with(allc_string_t str, allc_string_t sub)
 {
   size_t str_length = allc_cstr_length(str), sub_length = allc_cstr_length(sub);
-  String p = str + str_length - sub_length;
+  allc_string_t p = str + str_length - sub_length;
   return allc_cstr_is_equal(p, sub);
 }
 
-bool allc_cstr_is_containing(String str, String sub)
+bool allc_cstr_is_containing(allc_string_t str, allc_string_t sub)
 {
   size_t str_length = allc_cstr_length(str), sub_length = allc_cstr_length(sub);
   if (sub_length == 0)
@@ -479,19 +478,19 @@ bool allc_cstr_is_containing(String str, String sub)
   return false;
 }
 
-bool allc_cstr_is_empty(String str) { return *str == '\0'; }
+bool allc_cstr_is_empty(allc_string_t str) { return *str == '\0'; }
 
-size_t allc_cstr_length(String str)
+size_t allc_cstr_length(allc_string_t str)
 {
-  String p = str;
+  allc_string_t p = str;
   for (; *p != 0; ++p)
     ;
   return (size_t)(p - str);
 }
 
-size_t allc_cstr_find_blank(String str)
+size_t allc_cstr_find_blank(allc_string_t str)
 {
-  String p = str;
+  allc_string_t p = str;
   while (*p != 0 && !isblank(*p))
   {
     ++p;
@@ -499,9 +498,9 @@ size_t allc_cstr_find_blank(String str)
   return (size_t)(p - str);
 }
 
-size_t allc_cstr_find_char(String str, ssize_t n, const char chr)
+size_t allc_cstr_find_char(allc_string_t str, ssize_t n, const char chr)
 {
-  String p = str;
+  allc_string_t p = str;
   if (n == 0)
   {
     return 0;
@@ -528,7 +527,7 @@ size_t allc_cstr_find_char(String str, ssize_t n, const char chr)
   return p - str;
 }
 
-size_t allc_cstr_find_cstr(String str, ssize_t n, String sub)
+size_t allc_cstr_find_cstr(allc_string_t str, ssize_t n, allc_string_t sub)
 {
   size_t length = allc_cstr_length(str);
   size_t sub_length = allc_cstr_length(sub);
@@ -558,16 +557,16 @@ size_t allc_cstr_find_cstr(String str, ssize_t n, String sub)
   return length;
 }
 
-// String Manipulation {{{1
+// allc_string_t Manipulation {{{1
 // ------------------------
 
-void allc_cstr_remove(CharArray str, size_t from, size_t to)
+void allc_cstr_remove(allc_cstr_t str, size_t from, size_t to)
 {
   if (from >= to) return; // Do nothing if from >= to
   allc_cstr_shift_left(str + from, to - from);
 }
 
-void allc_cstr_remove_suffix(CharArray str, String suffix)
+void allc_cstr_remove_suffix(allc_cstr_t str, allc_string_t suffix)
 {
   if (allc_cstr_is_ending_with(str, suffix))
   {
@@ -577,7 +576,7 @@ void allc_cstr_remove_suffix(CharArray str, String suffix)
   }
 }
 
-void allc_cstr_remove_prefix(CharArray str, String prefix)
+void allc_cstr_remove_prefix(allc_cstr_t str, allc_string_t prefix)
 {
   if (allc_cstr_is_starting_with(str, prefix))
   {
@@ -586,9 +585,9 @@ void allc_cstr_remove_prefix(CharArray str, String prefix)
   }
 }
 
-size_t allc_cstr_strip_left_blank(CharArray str)
+size_t allc_cstr_strip_left_blank(allc_cstr_t str)
 {
-  String p = str;
+  allc_string_t p = str;
   for (; *p != 0; ++p)
   {
     if (isblank(*p))
@@ -605,12 +604,12 @@ size_t allc_cstr_strip_left_blank(CharArray str)
   return p - str;
 }
 
-size_t allc_cstr_strip_right_blank(CharArray str)
+size_t allc_cstr_strip_right_blank(allc_cstr_t str)
 {
   size_t length = allc_cstr_length(str);
   if (length == 0) return 0;
   
-  String p = str + length - 1;
+  allc_string_t p = str + length - 1;
   for (; p >= str; --p)
   {
     if (isblank(*p))
@@ -627,17 +626,17 @@ size_t allc_cstr_strip_right_blank(CharArray str)
   return length;
 }
 
-size_t allc_cstr_strip_blank(CharArray str_buf)
+size_t allc_cstr_strip_blank(allc_cstr_t str_buf)
 {
   size_t n = allc_cstr_strip_left_blank(str_buf);
   size_t m = allc_cstr_strip_right_blank(str_buf);
   return n + m;
 }
 
-void allc_cstr_shift_left(CharArray str, size_t n)
+void allc_cstr_shift_left(allc_cstr_t str, size_t n)
 {
   size_t length = allc_cstr_length(str);
-  CharArray p = str;
+  allc_cstr_t p = str;
   for (; p + n < str + length; ++p)
   {
     *p = *(p + n);
@@ -646,17 +645,17 @@ void allc_cstr_shift_left(CharArray str, size_t n)
     memset(p, 0, str + length - p);
 }
 
-void allc_cstr_shift_right(CharArray str, size_t n)
+void allc_cstr_shift_right(allc_cstr_t str, size_t n)
 {
   size_t length = allc_cstr_length(str);
-  CharArray end = str + length;
-  for (CharArray p = end - n; p < end; ++p)
+  allc_cstr_t end = str + length;
+  for (allc_cstr_t p = end - n; p < end; ++p)
   {
     *p = 0;
   }
 }
 
-void allc_cstr_replace_char(CharArray str, size_t n, const char chr, const char rpl)
+void allc_cstr_replace_char(allc_cstr_t str, size_t n, const char chr, const char rpl)
 {
   size_t i = 0;
   while (n != 0)
@@ -670,7 +669,7 @@ void allc_cstr_replace_char(CharArray str, size_t n, const char chr, const char 
   }
 }
 
-void allc_cstr_replace_all_char(CharArray str, const char chr, const char rpl)
+void allc_cstr_replace_all_char(allc_cstr_t str, const char chr, const char rpl)
 {
   size_t i = 0;
   while (true)
@@ -683,7 +682,7 @@ void allc_cstr_replace_all_char(CharArray str, const char chr, const char rpl)
   }
 }
 
-void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl)
+void allc_cstr_replace_cstr(allc_cstr_t str, size_t n, allc_string_t sub, allc_string_t rpl)
 {
   size_t i = 0,
          sub_length = allc_cstr_length(sub),
@@ -705,7 +704,7 @@ void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl)
   }
 }
 
-void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl)
+void allc_cstr_replace_all_cstr(allc_cstr_t str, allc_string_t sub, allc_string_t rpl)
 {
   size_t i = 0, 
          sub_length = allc_cstr_length(sub),
@@ -726,20 +725,20 @@ void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl)
   }
 }
 
-// String Representation {{{1
+// allc_string_t Representation {{{1
 // --------------------------
 
-String allc_cstr_repr_bool(bool b) { return b ? "true" : "false"; }
+allc_string_t allc_cstr_repr_bool(bool b) { return b ? "true" : "false"; }
 
-String allc_cstr_repr_test_result(bool b)
+allc_string_t allc_cstr_repr_test_result(bool b)
 {
   return b ? "passed" : "failed";
 }
 
-// String Case Conversion {{{1
+// allc_string_t Case Conversion {{{1
 // ---------------------------
 
-void allc_cstr_capitalize(CharArray str)
+void allc_cstr_capitalize(allc_cstr_t str)
 {
   if (*str != '\0' && isalpha(*str))
   {
@@ -747,10 +746,10 @@ void allc_cstr_capitalize(CharArray str)
   }
 }
 
-void allc_cstr_capitalize_all(CharArray str)
+void allc_cstr_capitalize_all(allc_cstr_t str)
 {
   bool at_word_start = true;
-  for (CharArray p = str; *p != '\0'; ++p)
+  for (allc_cstr_t p = str; *p != '\0'; ++p)
   {
     if (isblank(*p))
     {
@@ -768,7 +767,7 @@ void allc_cstr_capitalize_all(CharArray str)
   }
 }
 
-void allc_cstr_lower(CharArray str)
+void allc_cstr_lower(allc_cstr_t str)
 {
   if (*str != '\0' && isalpha(*str))
   {
@@ -776,9 +775,9 @@ void allc_cstr_lower(CharArray str)
   }
 }
 
-void allc_cstr_lower_all(CharArray str)
+void allc_cstr_lower_all(allc_cstr_t str)
 {
-  for (CharArray p = str; *p != '\0'; ++p)
+  for (allc_cstr_t p = str; *p != '\0'; ++p)
   {
     if (isalpha(*p))
     {
@@ -787,7 +786,7 @@ void allc_cstr_lower_all(CharArray str)
   }
 }
 
-void allc_cstr_upper(CharArray str)
+void allc_cstr_upper(allc_cstr_t str)
 {
   if (*str != '\0' && isalpha(*str))
   {
@@ -795,9 +794,9 @@ void allc_cstr_upper(CharArray str)
   }
 }
 
-void allc_cstr_upper_all(CharArray str)
+void allc_cstr_upper_all(allc_cstr_t str)
 {
-  for (CharArray p = str; *p != '\0'; ++p)
+  for (allc_cstr_t p = str; *p != '\0'; ++p)
   {
     if (isalpha(*p))
     {
@@ -806,7 +805,7 @@ void allc_cstr_upper_all(CharArray str)
   }
 }
 
-void allc_cstr_swap_case(CharArray str)
+void allc_cstr_swap_case(allc_cstr_t str)
 {
   if (*str != '\0' && isalpha(*str))
   {
@@ -814,9 +813,9 @@ void allc_cstr_swap_case(CharArray str)
   }
 }
 
-void allc_cstr_swap_case_all(CharArray str)
+void allc_cstr_swap_case_all(allc_cstr_t str)
 {
-  for (CharArray p = str; *p != '\0'; ++p)
+  for (allc_cstr_t p = str; *p != '\0'; ++p)
   {
     if (isalpha(*p))
     {
@@ -828,9 +827,9 @@ void allc_cstr_swap_case_all(CharArray str)
 // Other {{{1
 // ----------
 
-void allc_cstr_copy(String from, CharArray to) { strcpy(to, from); }
+void allc_cstr_copy(allc_string_t from, allc_cstr_t to) { strcpy(to, from); }
 
-void allc_cstr_copy_n(String from, size_t n, CharArray to)
+void allc_cstr_copy_n(allc_string_t from, size_t n, allc_cstr_t to)
 {
   strncpy(to, from, n);
 }

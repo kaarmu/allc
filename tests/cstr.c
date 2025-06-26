@@ -1,9 +1,7 @@
 #define ALLC_IMPL
 
-#include "../dev/macro.h"
 #include "../dev/cstr.h"
-#include "../dev/allocator.h"
-#include "../dev/strbuf.h"
+#include "../dev/macro.h"
 
 void test__allc_cstr_copy()
 {
