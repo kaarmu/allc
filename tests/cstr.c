@@ -1,5 +1,9 @@
+#define ALLC_IMPL
+
 #include "../dev/macro.h"
 #include "../dev/cstr.h"
+#include "../dev/allocator.h"
+#include "../dev/strbuf.h"
 
 void allc_cstr_capitalize(char *str);
 void allc_cstr_capitalize_all(char *str);
@@ -124,12 +128,12 @@ void test__inspection()
 
     // Test allc_cstr_find_blank
     ALLC_TEST_ANY("5", "%zu", allc_cstr_find_blank("Hello World"));
-    ALLC_TEST_ANY("11", "%zu", allc_cstr_find_blank("HelloWorld"));
+    ALLC_TEST_ANY("10", "%zu", allc_cstr_find_blank("HelloWorld"));
     ALLC_TEST_ANY("0", "%zu", allc_cstr_find_blank(""));
 
     // Test allc_cstr_find_char
     ALLC_TEST_ANY("4", "%zu", allc_cstr_find_char("HelloWorld", 1, 'o'));
-    ALLC_TEST_ANY("7", "%zu", allc_cstr_find_char("HelloWorld", 2, 'o'));
+    ALLC_TEST_ANY("6", "%zu", allc_cstr_find_char("HelloWorld", 2, 'o'));
     ALLC_TEST_ANY("10", "%zu", allc_cstr_find_char("HelloWorld", 3, 'o'));
     ALLC_TEST_ANY("0", "%zu", allc_cstr_find_char("HelloWorld", 0, 'o'));
     ALLC_TEST_ANY("10", "%zu", allc_cstr_find_char("HelloWorld", 1, 'z'));
@@ -159,7 +163,7 @@ void test__allc_cstr_remove()
     // Test: Basic removal from the middle
     allc_cstr_copy("HelloWorld", x);
     allc_cstr_remove(x, 1, 4);
-    ALLC_TEST_ANY("HloWorld", "%s", x);
+    ALLC_TEST_ANY("HoWorld", "%s", x);
 
     // Test: Removing from the start
     allc_cstr_copy("HelloWorld", x);

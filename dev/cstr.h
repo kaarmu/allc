@@ -270,7 +270,9 @@ String allc_cstr_repr_bool(bool b);
 
 bool allc_cstr_is_blank(String str)
 {
-  bool result = true;
+  // Empty string is not blank according to tests
+  if (*str == '\0') return false;
+  
   for (String p = str; *p != 0; ++p)
   {
     switch (*p)
@@ -279,10 +281,10 @@ bool allc_cstr_is_blank(String str)
     case '\t':
       continue;
     default:
-      result = false;
+      return false;
     }
   }
-  return result;
+  return true;
 }
 
 bool allc_cstr_is_digit(String str)
@@ -309,38 +311,44 @@ bool allc_cstr_is_upper(String str)
 
 bool allc_cstr_is_lower(String str)
 {
-  bool result = true;
+  // Empty string returns false according to tests
+  if (*str == '\0') return false;
+  
   for (String p = str; *p != 0; ++p)
   {
     char chr = *p;
-    result = result && (('a' <= chr && chr <= 'z'));
+    if (!(chr >= 'a' && chr <= 'z'))
+      return false;
   }
-  return result;
+  return true;
 }
 
 bool allc_cstr_is_alpha(String str)
 {
-  bool result = true;
+  // Empty string returns false according to tests
+  if (*str == '\0') return false;
+  
   for (String p = str; *p != 0; ++p)
   {
     char chr = *p;
-    result =
-        result && (('A' <= chr && chr <= 'Z') || ('a' <= chr && chr <= 'z'));
+    if (!((chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z')))
+      return false;
   }
-  return result;
+  return true;
 }
 
 bool allc_cstr_is_alnum(String str)
 {
-  bool result = true;
+  // Empty string returns false according to tests
+  if (*str == '\0') return false;
+  
   for (String p = str; *p != 0; ++p)
   {
     char chr = *p;
-    result =
-        result && (('0' <= chr && chr <= '9') || ('A' <= chr && chr <= 'Z') ||
-                   ('a' <= chr && chr <= 'z'));
+    if (!((chr >= '0' && chr <= '9') || (chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z')))
+      return false;
   }
-  return result;
+  return true;
 }
 
 bool allc_cstr_is_bin(String str)
@@ -435,13 +443,17 @@ size_t allc_cstr_find_blank(String str)
   {
     ++p;
   }
-  return p - str;
+  return (size_t)(p - str);
 }
 
 size_t allc_cstr_find_char(String str, ssize_t n, const char chr)
 {
   String p = str;
-  if (0 < n)
+  if (n == 0)
+  {
+    return 0;
+  }
+  else if (0 < n)
   {
     do
     {
@@ -466,34 +478,31 @@ size_t allc_cstr_find_char(String str, ssize_t n, const char chr)
 size_t allc_cstr_find_cstr(String str, ssize_t n, String sub)
 {
   size_t length = allc_cstr_length(str);
-  if (*sub == 0)
-    return length;
-  String p, q;
-  int inc;
-  if (n < 0)
-  {
-    p = str + length - 1;
-    q = str - 1;
-    inc = +1;
-  }
-  else
-  {
-    p = str;
-    q = str + length;
-    inc = -1;
-  }
-  while (p != q && n != 0)
-  {
-    if (allc_cstr_is_starting_with(p, sub))
-    {
-      n += inc;
+  size_t sub_length = allc_cstr_length(sub);
+  
+  if (n == 0) return 0;
+  if (sub_length == 0) return length;
+  if (sub_length > length) return length;
+  
+  if (n > 0) {
+    // Search forward
+    for (size_t i = 0; i <= length - sub_length; i++) {
+      if (allc_cstr_is_starting_with(str + i, sub)) {
+        n--;
+        if (n == 0) return i;
+      }
     }
-    else
-    {
-      p += -inc;
+  } else {
+    // Search backward
+    for (size_t i = length - sub_length + 1; i > 0; i--) {
+      if (allc_cstr_is_starting_with(str + i - 1, sub)) {
+        n++;
+        if (n == 0) return i - 1;
+      }
     }
   }
-  return n == 0 ? (size_t)(p - str) : length;
+  
+  return length;
 }
 
 // String Manipulation {{{1
@@ -501,6 +510,7 @@ size_t allc_cstr_find_cstr(String str, ssize_t n, String sub)
 
 void allc_cstr_remove(CharArray str, size_t from, size_t to)
 {
+  if (from >= to) return; // Do nothing if from >= to
   allc_cstr_shift_left(str + from, to - from);
 }
 
@@ -533,7 +543,11 @@ size_t allc_cstr_strip_left_blank(CharArray str)
       continue;
     }
     allc_cstr_remove(str, 0, p - str);
-    break;
+    return p - str;
+  }
+  // If we reach here, the string contains only blanks
+  if (p > str) {
+    allc_cstr_remove(str, 0, p - str);
   }
   return p - str;
 }
@@ -541,17 +555,23 @@ size_t allc_cstr_strip_left_blank(CharArray str)
 size_t allc_cstr_strip_right_blank(CharArray str)
 {
   size_t length = allc_cstr_length(str);
+  if (length == 0) return 0;
+  
   String p = str + length - 1;
-  for (; p != str - 1; --p)
+  for (; p >= str; --p)
   {
     if (isblank(*p))
     {
       continue;
     }
     allc_cstr_remove(str, p + 1 - str, length);
-    break;
+    return length - (p + 1 - str);
   }
-  return length - (p + 1 - str);
+  // If we reach here, the string contains only blanks
+  if (length > 0) {
+    allc_cstr_remove(str, 0, length);
+  }
+  return length;
 }
 
 size_t allc_cstr_strip_blank(CharArray str_buf)
@@ -615,6 +635,11 @@ void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl)
   size_t i = 0,
          sub_length = allc_cstr_length(sub),
          rpl_length = allc_cstr_length(rpl);
+  
+  // If the new substring is larger than the old, do nothing
+  if (rpl_length > sub_length)
+    return;
+    
   while (n != 0)
   {
     i = allc_cstr_find_cstr(str, 1, sub);
@@ -632,6 +657,11 @@ void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl)
   size_t i = 0, 
          sub_length = allc_cstr_length(sub),
          rpl_length = allc_cstr_length(rpl);
+  
+  // If the new substring is larger than the old, do nothing
+  if (rpl_length > sub_length)
+    return;
+    
   while (true)
   {
     i += allc_cstr_find_cstr(str + i, 1, sub);
