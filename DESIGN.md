@@ -304,10 +304,65 @@ allc/
 - [ ] API finalization and stability guarantees
 
 ### Testing Strategy
+
+#### Test Organization
 - Unit tests for each module in `tests/` directory
+- Each test file follows the naming pattern `tests/<module>.c`
 - Makefile-based build system with test targets
-- Test macros for assertion and debugging
-- Example programs demonstrating usage
+- Standalone test executables for each module
+
+#### Testing Style and Conventions
+
+**Function Structure**: Each test file follows a consistent pattern as exemplified in `tests/cstr.c`:
+- One test function per feature or logical grouping
+- Clear section headers using `printf()` for readability
+- Systematic testing of normal cases, edge cases, and error conditions
+
+**Test Function Pattern**:
+```c
+#include "../dev/macro.h"
+
+void test__feature_name() {
+    printf("\n[%s]\n", __func__);
+    
+    printf(">> Test normal cases:\n");
+    ALLC_TEST_ANY("Expected string", "string format... %s", "varargs for string format");
+    
+    printf(">> Test edge cases:\n");
+    ALLC_TEST_ANY("Expected string", "string format... %s", "varargs for string format");
+    
+    printf(">> Test error conditions:\n");
+    ALLC_TEST_ANY("Expected string", "string format... %s", "varargs for string format");
+}
+```
+
+**Assertion Macros**: 
+- Use `ALLC_TEST_ANY(expected, strfmt, varargs...)` for all test assertions, use `cstr.h` for necessary string conversions
+- Provide clear, descriptive messages explaining what is being tested
+- Focus on readable test output that helps debugging failures
+
+**Test Coverage Guidelines**:
+1. **Normal Operation**: Test typical usage patterns and expected inputs
+2. **Boundary Conditions**: Test limits, empty inputs, and maximum values
+3. **Error Handling**: Test invalid inputs and error recovery
+4. **Memory Management**: Verify proper allocation/deallocation when applicable
+5. **Edge Cases**: Test corner cases specific to the module's functionality
+
+**Input/Output Testing**: 
+- Clearly separate input preparation from expected output verification
+- Use meaningful test data that represents real-world usage
+- Test both successful operations and failure scenarios
+
+**Performance Testing**: Include stress tests for data structures to verify:
+- Large dataset handling
+- Memory usage patterns
+- Performance characteristics under load
+
+#### Test Execution
+- Individual module tests can be run standalone
+- Integration tests verify module interactions
+- All tests must pass before code integration
+- Test macros provide clear failure reporting with context
 
 ### Documentation Strategy
 - Inline documentation in header files
