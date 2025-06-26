@@ -255,7 +255,7 @@ allc/
 
 #### Phase 1: Core Infrastructure ✅
 - [ ] Type system foundation (`types.h`)
-- [ ] Memory allocator abstraction (`allocator.h`)
+- [x] Memory allocator abstraction (`allocator.h`)
 - [ ] Basic string operations (`cstr.h`, `strbuf.h`)
 - [ ] Fundamental data structures (`list.h`, `array.h`)
 - [ ] Essential utilities (`macro.h`, `logger.h`)
