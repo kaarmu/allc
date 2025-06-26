@@ -1,0 +1,114 @@
+# Compiled Object Files
+*.o
+*.obj
+*.elf
+
+# Executables
+*.exe
+*.out
+*.app
+*.bin
+
+# Shared libraries
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Static libraries
+*.a
+*.lib
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Core dumps
+core
+core.*
+
+# Build directories
+build/
+Build/
+BUILD/
+
+# Test executables
+tests/types
+tests/allocator
+tests/cstr
+tests/strbuf
+tests/list
+tests/array
+tests/hashmap
+tests/set
+tests/queue
+tests/path
+
+# Main executable
+main
+_main
+allc
+
+# Debug/temporary files
+debug_*
+temp_*
+tmp_*
+
+# IDE files
+.vscode/
+.vs/
+*.sln
+*.vcxproj*
+*.cbp
+*.layout
+
+# Editor backup files
+*~
+*.swp
+*.swo
+*.tmp
+*.bak
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Compiler and build system files
+*.d
+*.dep
+compile_commands.json
+.ninja_deps
+.ninja_log
+
+# Documentation build artifacts
+docs/html/
+docs/latex/
+*.aux
+*.log
+*.toc
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Profiling data
+*.gcda
+*.gcno
+*.gcov
+gmon.out
+
+# Valgrind output
+*.valgrind
+vgcore.*
+
+# Address sanitizer output
+*.asan
