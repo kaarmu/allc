@@ -61,7 +61,9 @@
 - String inspection functions (`allc_cstr_is_digit`, `allc_cstr_is_alpha`)
 - String manipulation (`allc_cstr_strip_blank`, `allc_cstr_replace_char`)
 - String searching (`allc_cstr_find_char`, `allc_cstr_find_cstr`)
+- Case conversion functions (`allc_cstr_upper_all`, `allc_cstr_capitalize_all`)
 - Safe string operations
+- Uses standardized types (`allc_string_t`, `allc_cstr_t`)
 
 #### 4. **strbuf.h** - Dynamic String Buffer
 - Growable string buffer with automatic memory management
@@ -257,7 +259,7 @@ allc/
 - [ ] Type system foundation (`types.h`)
 - [x] Memory allocator abstraction (`allocator.h`)
 - [x] Basic string operations (`cstr.h`, `strbuf.h`)
-- [ ] Fundamental data structures (`list.h`, `array.h`)
+- [x] Fundamental data structures (`list.h`, `array.h`)
 - [ ] Essential utilities (`macro.h`, `logger.h`)
 
 #### Phase 2: Standard Data Structures 🔄

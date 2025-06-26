@@ -33,6 +33,7 @@ core.*
 build/
 Build/
 BUILD/
+.cache/
 
 # Test executables
 tests/types
