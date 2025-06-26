@@ -384,6 +384,61 @@ void test__allc_list_memory_safety()
     allc_list_delete(NULL); // Should not crash
 }
 
+void test__allc_list_stress()
+{
+    printf("\n[%s]\n", __func__);
+    
+    allc_allocator_t allocator = allc_allocator_c();
+    allc_list_t list = allc_list_new(allocator);
+    
+    const int num_entries = 1000;
+    
+    printf(">> Test stress - append operations:\n");
+    // Add many entries
+    for (int i = 0; i < num_entries; i++) {
+        allc_list_append(&list, sizeof(int), &i);
+    }
+    
+    ALLC_TEST_ANY("1000", "%zu", list.length);
+    
+    printf(">> Test stress - verify all entries exist:\n");
+    // Verify all entries exist and have correct values
+    bool success = true;
+    for (int i = 0; success && i < num_entries; i++) {
+        int *value = (int*)allc_list_at(&list, i);
+        success &= (value != NULL);
+        if (value) {
+            success &= (*value == i);
+        }
+    }
+    ALLC_TEST_BOOL(true, success);
+    
+    printf(">> Test stress - remove half the entries:\n");
+    // Remove the second half of entries (indices 500-999)
+    success = true;
+    allc_size_t target_length = num_entries / 2;
+    while (success && list.length > target_length) {
+        allc_list_remove(&list, list.length - 1);
+    }
+    ALLC_TEST_ANY("500", "%zu", list.length);
+    
+    printf(">> Test stress - verify remaining entries:\n");
+    // Verify remaining entries have correct values (should be 0, 1, 2, ..., 499)
+    success = true;
+    for (allc_size_t i = 0; success && i < list.length; i++) {
+        int *value = (int*)allc_list_at(&list, i);
+        success &= (value != NULL);
+        if (value) {
+            success &= (*value == (int)i);
+        }
+    }
+    ALLC_TEST_BOOL(true, success);
+    
+    allc_list_delete(&list);
+    
+    printf("Stress test completed successfully\n");
+}
+
 int main()
 {
     test__allc_list_new_delete();
@@ -399,6 +454,7 @@ int main()
     test__allc_list_with_strings();
     test__allc_list_edge_cases();
     test__allc_list_memory_safety();
+    test__allc_list_stress();
     
     return 0;
 }

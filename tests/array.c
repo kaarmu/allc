@@ -478,10 +478,12 @@ void test__allc__allc_array_memory_management() {
     
     printf(">> Test data integrity after reallocation:\n");
     // Verify data integrity
-    for (int i = 0; i < 100; i++) {
+    bool success = true;
+    for (int i = 0; success && i < 100; i++) {
         int *val = (int*)allc_array_at(&arr, i);
-        ALLC_TEST_ANY("true", "%s", allc_cstr_repr_bool(*val == i));
+        success &= (val != NULL && *val == i);
     }
+    ALLC_TEST_BOOL(true, success);
     
     allc_array_delete(&arr);
 }

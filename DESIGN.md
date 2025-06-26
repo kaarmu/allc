@@ -343,11 +343,41 @@ void test__feature_name() {
 - Provide clear, descriptive messages explaining what is being tested
 - Focus on readable test output that helps debugging failures
 
+**Loop Testing with Success Variable Pattern**:
+When testing operations that require multiple iterations (stress tests, bulk operations, verification loops), use the success variable pattern for early termination and clear failure reporting:
+
+```c
+// Pattern: Initialize success, use in loop condition, accumulate results
+bool success = true;
+for (int i = 0; success && i < num_items; i++) {
+    // Test individual operation
+    success &= function_under_test(i) == expected_result;
+    
+    // Optional: Early break on complex conditions
+    if (!(success = complex_condition)) 
+        break;
+        
+    // Optional: Additional validation within loop
+    if (additional_check) {
+        success &= (additional_condition);
+    }
+}
+ALLC_TEST_BOOL(true, success);
+```
+
+**Benefits of this approach**:
+- **Early Termination**: Loop stops immediately when first failure occurs
+- **Single Assertion**: One test result covers the entire batch operation
+- **Clear Intent**: Makes it obvious that all iterations must succeed
+- **Performance**: Avoids continuing expensive operations after failure
+- **Debugging**: Combined with descriptive loop context, pinpoints failure iteration
+
 **Test Coverage Guidelines**:
 1. **Normal Operation**: Test typical usage patterns and expected inputs
 2. **Boundary Conditions**: Test limits, empty inputs, and maximum values
 3. **Error Handling**: Test invalid inputs and error recovery
 4. **Memory Management**: Verify proper allocation/deallocation when applicable
+5. **Bulk Operations**: Use success variable pattern for stress tests and verification loops
 5. **Edge Cases**: Test corner cases specific to the module's functionality
 
 **Input/Output Testing**: 
