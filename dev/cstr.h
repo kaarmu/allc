@@ -245,6 +245,59 @@ void allc_cstr_replace_cstr(CharArray str, size_t n, String sub, String rpl);
  **/
 void allc_cstr_replace_all_cstr(CharArray str, String sub, String rpl);
 
+// String - Case Conversion {{{2
+// -----------------------------
+
+/**
+ * Capitalize the first character of the string.
+ *
+ * If the string is empty, do nothing.
+ **/
+void allc_cstr_capitalize(CharArray str);
+
+/**
+ * Capitalize the first character of each word in the string.
+ *
+ * A word is defined as a sequence of non-blank characters.
+ **/
+void allc_cstr_capitalize_all(CharArray str);
+
+/**
+ * Convert the first character of the string to lowercase.
+ *
+ * If the string is empty, do nothing.
+ **/
+void allc_cstr_lower(CharArray str);
+
+/**
+ * Convert all characters in the string to lowercase.
+ **/
+void allc_cstr_lower_all(CharArray str);
+
+/**
+ * Convert the first character of the string to uppercase.
+ *
+ * If the string is empty, do nothing.
+ **/
+void allc_cstr_upper(CharArray str);
+
+/**
+ * Convert all characters in the string to uppercase.
+ **/
+void allc_cstr_upper_all(CharArray str);
+
+/**
+ * Swap the case of the first character in the string.
+ *
+ * If the string is empty, do nothing.
+ **/
+void allc_cstr_swap_case(CharArray str);
+
+/**
+ * Swap the case of all characters in the string.
+ **/
+void allc_cstr_swap_case_all(CharArray str);
+
 // String - Representations {{{2
 // -----------------------------
 
@@ -681,6 +734,95 @@ String allc_cstr_repr_bool(bool b) { return b ? "true" : "false"; }
 String allc_cstr_repr_test_result(bool b)
 {
   return b ? "passed" : "failed";
+}
+
+// String Case Conversion {{{1
+// ---------------------------
+
+void allc_cstr_capitalize(CharArray str)
+{
+  if (*str != '\0' && isalpha(*str))
+  {
+    *str = toupper(*str);
+  }
+}
+
+void allc_cstr_capitalize_all(CharArray str)
+{
+  bool at_word_start = true;
+  for (CharArray p = str; *p != '\0'; ++p)
+  {
+    if (isblank(*p))
+    {
+      at_word_start = true;
+    }
+    else if (at_word_start && isalpha(*p))
+    {
+      *p = toupper(*p);
+      at_word_start = false;
+    }
+    else
+    {
+      at_word_start = false;
+    }
+  }
+}
+
+void allc_cstr_lower(CharArray str)
+{
+  if (*str != '\0' && isalpha(*str))
+  {
+    *str = tolower(*str);
+  }
+}
+
+void allc_cstr_lower_all(CharArray str)
+{
+  for (CharArray p = str; *p != '\0'; ++p)
+  {
+    if (isalpha(*p))
+    {
+      *p = tolower(*p);
+    }
+  }
+}
+
+void allc_cstr_upper(CharArray str)
+{
+  if (*str != '\0' && isalpha(*str))
+  {
+    *str = toupper(*str);
+  }
+}
+
+void allc_cstr_upper_all(CharArray str)
+{
+  for (CharArray p = str; *p != '\0'; ++p)
+  {
+    if (isalpha(*p))
+    {
+      *p = toupper(*p);
+    }
+  }
+}
+
+void allc_cstr_swap_case(CharArray str)
+{
+  if (*str != '\0' && isalpha(*str))
+  {
+    *str = islower(*str) ? toupper(*str) : tolower(*str);
+  }
+}
+
+void allc_cstr_swap_case_all(CharArray str)
+{
+  for (CharArray p = str; *p != '\0'; ++p)
+  {
+    if (isalpha(*p))
+    {
+      *p = islower(*p) ? toupper(*p) : tolower(*p);
+    }
+  }
 }
 
 // Other {{{1

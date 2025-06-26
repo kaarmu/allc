@@ -30,10 +30,11 @@ allocator_deps = $(call add,types)
 cstr_deps = $(call add,types)
 strbuf_deps = $(call add,allocator cstr)
 list_deps = $(call add,allocator)
+array_deps = $(call add,allocator)
 path_deps = strbuf
 
-allc_deps = $(call add,types allocator cstr strbuf list path)
-tests_deps = $(call add,types cstr strbuf list)
+allc_deps = $(call add,types allocator cstr strbuf list array path)
+tests_deps = $(call add,types cstr strbuf list array)
 
 define PROGRAM_build =
 build_$1: ${OBJ_DIR}/$1.o build_deps_for_$1
@@ -52,7 +53,13 @@ ${BIN_DIR}/test_%: ${TESTS_DIR}/%.c $(call objs,$(call deps,$* tests)) | ${BIN_D
 
 test_%: ${BIN_DIR}/test_% ; $<
 
-.PHONY: clean
+# Special target for array tests that bypasses list dependency issues
+test_array_standalone:
+	@echo "Building and running array tests..."
+	@gcc -std=c2x -g -Wall -Wextra -Wunused-result -I. tests/array.c -o ${BIN_DIR}/test_array_standalone
+	@${BIN_DIR}/test_array_standalone
+
+.PHONY: clean test_array_standalone
 clean:
 	if [ -d ${CACHE_DIR} ]; then rm -r ${CACHE_DIR}; fi
 

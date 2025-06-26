@@ -5,15 +5,6 @@
 #include "../dev/allocator.h"
 #include "../dev/strbuf.h"
 
-void allc_cstr_capitalize(char *str);
-void allc_cstr_capitalize_all(char *str);
-void allc_cstr_lower(char *str);
-void allc_cstr_lower_all(char *str);
-void allc_cstr_upper(char *str);
-void allc_cstr_upper_all(char *str);
-void allc_cstr_swap_case(char *str);
-void allc_cstr_swap_case_all(char *str);
-
 void test__allc_cstr_copy()
 {
     printf("\n[%s]\n", __func__);
@@ -470,6 +461,157 @@ void test__allc_cstr_replace_all_cstr()
     ALLC_TEST_ANY("HelloWorld", "%s", x);
 }
 
+void test__allc_cstr_case_conversion()
+{
+    printf("\n[%s]\n", __func__);
+
+    char str[64];
+
+    // Test: allc_cstr_capitalize
+    printf("Testing allc_cstr_capitalize...\n");
+    allc_cstr_copy("hello world", str);
+    allc_cstr_capitalize(str);
+    ALLC_TEST_ANY("Hello world", "%s", str);
+
+    allc_cstr_copy("HELLO", str);
+    allc_cstr_capitalize(str);
+    ALLC_TEST_ANY("HELLO", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_capitalize(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    allc_cstr_copy("123abc", str);
+    allc_cstr_capitalize(str);
+    ALLC_TEST_ANY("123abc", "%s", str);
+
+    // Test: allc_cstr_capitalize_all
+    printf("Testing allc_cstr_capitalize_all...\n");
+    allc_cstr_copy("hello world test", str);
+    allc_cstr_capitalize_all(str);
+    ALLC_TEST_ANY("Hello World Test", "%s", str);
+
+    allc_cstr_copy("  hello   world  ", str);
+    allc_cstr_capitalize_all(str);
+    ALLC_TEST_ANY("  Hello   World  ", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_capitalize_all(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    allc_cstr_copy("123 abc def", str);
+    allc_cstr_capitalize_all(str);
+    ALLC_TEST_ANY("123 Abc Def", "%s", str);
+
+    // Test: allc_cstr_lower
+    printf("Testing allc_cstr_lower...\n");
+    allc_cstr_copy("Hello World", str);
+    allc_cstr_lower(str);
+    ALLC_TEST_ANY("hello World", "%s", str);
+
+    allc_cstr_copy("HELLO", str);
+    allc_cstr_lower(str);
+    ALLC_TEST_ANY("hELLO", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_lower(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    allc_cstr_copy("123ABC", str);
+    allc_cstr_lower(str);
+    ALLC_TEST_ANY("123ABC", "%s", str);
+
+    // Test: allc_cstr_lower_all
+    printf("Testing allc_cstr_lower_all...\n");
+    allc_cstr_copy("Hello World TEST", str);
+    allc_cstr_lower_all(str);
+    ALLC_TEST_ANY("hello world test", "%s", str);
+
+    allc_cstr_copy("HELLO123WORLD", str);
+    allc_cstr_lower_all(str);
+    ALLC_TEST_ANY("hello123world", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_lower_all(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    // Test: allc_cstr_upper
+    printf("Testing allc_cstr_upper...\n");
+    allc_cstr_copy("hello world", str);
+    allc_cstr_upper(str);
+    ALLC_TEST_ANY("Hello world", "%s", str);
+
+    allc_cstr_copy("Hello", str);
+    allc_cstr_upper(str);
+    ALLC_TEST_ANY("Hello", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_upper(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    allc_cstr_copy("123abc", str);
+    allc_cstr_upper(str);
+    ALLC_TEST_ANY("123abc", "%s", str);
+
+    // Test: allc_cstr_upper_all
+    printf("Testing allc_cstr_upper_all...\n");
+    allc_cstr_copy("hello world test", str);
+    allc_cstr_upper_all(str);
+    ALLC_TEST_ANY("HELLO WORLD TEST", "%s", str);
+
+    allc_cstr_copy("Hello123World", str);
+    allc_cstr_upper_all(str);
+    ALLC_TEST_ANY("HELLO123WORLD", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_upper_all(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    // Test: allc_cstr_swap_case
+    printf("Testing allc_cstr_swap_case...\n");
+    allc_cstr_copy("Hello World", str);
+    allc_cstr_swap_case(str);
+    ALLC_TEST_ANY("hello World", "%s", str);
+
+    allc_cstr_copy("hello", str);
+    allc_cstr_swap_case(str);
+    ALLC_TEST_ANY("Hello", "%s", str);
+
+    allc_cstr_copy("HELLO", str);
+    allc_cstr_swap_case(str);
+    ALLC_TEST_ANY("hELLO", "%s", str);
+
+    allc_cstr_copy("", str);
+    allc_cstr_swap_case(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    allc_cstr_copy("123abc", str);
+    allc_cstr_swap_case(str);
+    ALLC_TEST_ANY("123abc", "%s", str);  // '1' is not alphabetic, so no change
+
+    allc_cstr_copy("abc123", str);
+    allc_cstr_swap_case(str);
+    ALLC_TEST_ANY("Abc123", "%s", str);  // 'a' -> 'A', others unchanged
+
+    // Test: allc_cstr_swap_case_all
+    printf("Testing allc_cstr_swap_case_all...\n");
+    allc_cstr_copy("Hello World", str);
+    allc_cstr_swap_case_all(str);
+    ALLC_TEST_ANY("hELLO wORLD", "%s", str);
+
+    allc_cstr_copy("HeLLo123WoRLd", str);
+    allc_cstr_swap_case_all(str);
+    ALLC_TEST_ANY("hEllO123wOrlD", "%s", str);  // H->h, e->E, L->l, L->l, o->O, W->w, o->O, R->r, L->l, d->D
+
+    allc_cstr_copy("", str);
+    allc_cstr_swap_case_all(str);
+    ALLC_TEST_ANY("", "%s", str);
+
+    allc_cstr_copy("123!@#", str);
+    allc_cstr_swap_case_all(str);
+    ALLC_TEST_ANY("123!@#", "%s", str);
+}
+
 int main()
 {
     test__allc_cstr_copy();
@@ -488,4 +630,5 @@ int main()
     test__allc_cstr_replace_all_char();
     test__allc_cstr_replace_cstr();
     test__allc_cstr_replace_all_cstr();
+    test__allc_cstr_case_conversion();
 }
