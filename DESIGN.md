@@ -263,7 +263,7 @@ allc/
 - [ ] Essential utilities (`macro.h`, `logger.h`)
 
 #### Phase 2: Standard Data Structures 🔄
-- [ ] Hash tables and maps (`hashmap.h`)
+- [x] Hash tables and maps (`hashmap.h`)
 - [ ] Sets and collections (`set.h`)
 - [ ] Queues and stacks (`queue.h`)
 - [ ] Priority queues and heaps (`heap.h`)

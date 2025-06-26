@@ -31,6 +31,7 @@ cstr_deps = $(call add,types)
 strbuf_deps = $(call add,allocator cstr)
 list_deps = $(call add,allocator)
 array_deps = $(call add,allocator)
+hashmap_deps = $(call add,allocator cstr)
 path_deps = strbuf
 
 allc_deps = $(call add,types allocator cstr strbuf list array path)
