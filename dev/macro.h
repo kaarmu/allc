@@ -49,7 +49,7 @@
   } while (0)
 
 #define ALLC_DEBUG_VALUE(fmt, ...)                                             \
-  printf("(%s:L%03d) " fmt, __FILE__, __LINE__, __VA_ARGS__)
+  printf("(%s:%03d) " fmt, __FILE__, __LINE__, __VA_ARGS__)
 
 #define ALLC_TEST_ANY(expected, fmt, actual)                                   \
   do {                                                                         \
