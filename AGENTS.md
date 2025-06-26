@@ -35,10 +35,10 @@ This is **allc**, a collection of STB-style header-only C libraries providing ev
 ### Core Modules Status
 - ✅ `types.h` - Type system foundation
 - ✅ `allocator.h` - Memory management abstraction
-- ✅ `cstr.h` - C string utilities
+- ✅ `cstr.h` - C string utilities (includes case conversion functions)
 - 🔄 `strbuf.h` - Dynamic string buffer (partial implementation)
 - ✅ `list.h` - Doubly linked list
-- 🔄 `array.h` - Dynamic arrays (partial implementation)
+- ✅ `array.h` - Dynamic arrays (growable, type-agnostic, slice operations)
 - 🔄 `path.h` - File system path handling
 - ✅ `logger.h` - Logging system
 - ✅ `macro.h` - Utility macros

@@ -16,17 +16,15 @@ This directory contains **unit tests** for all allc modules. Each test file corr
 - One test file per module (`module.c` tests `../dev/module.h`)
 - Test functions named `test__allc_module_function()`
 - Tests grouped by functionality within each file
-- Clear test output with pass/fail indication
+- Clear section headers using `printf()` for readability
+- Follow the pattern: normal cases, edge cases, error conditions
 
 ## Test Infrastructure
 
 ### Testing Macros (from `macro.h`)
 ```c
-// Test any value with format string
+// Primary testing macro - test any value with format string
 ALLC_TEST_ANY(expected_string, format, actual_value)
-
-// Test boolean conditions
-ALLC_TEST_BOOL(expected_bool, actual_bool)
 
 // Debug value printing
 ALLC_DEBUG_VALUE(format, value)
@@ -34,10 +32,30 @@ ALLC_DEBUG_VALUE(format, value)
 
 ### Test Structure Pattern
 ```c
-#include "../src/macro.h"
-#include "../src/module.h"
+#define ALLC_IMPL
 
-void test__allc_module_function_basic() {
+#include "../dev/cstr.h"
+#include "../dev/macro.h"
+
+void test__allc_module_function() {
+    printf("\n[%s]\n", __func__);
+    
+    // Test normal cases
+    ALLC_TEST_ANY("expected_output", "%s", actual_result);
+    
+    // Test edge cases  
+    ALLC_TEST_ANY("edge_case_output", "%d", edge_result);
+    
+    // Test error conditions
+    ALLC_TEST_ANY("error_output", "%s", error_result);
+}
+
+int main() {
+    test__allc_module_function();
+    // ... other test calls
+    return 0;
+}
+```
     printf("\n[%s]\n", __func__);
     
     // Setup
@@ -57,7 +75,7 @@ void test__allc_module_function_edge_cases() {
     
     // Test NULL inputs
     result = allc_module_function(NULL, test_input);
-    ALLC_TEST_BOOL(false, result == expected_error);
+    ALLC_TEST_ANY("false", "%s", allc_cstr_repr_bool(result == expected_error));
     
     // Test empty inputs
     // Test boundary conditions
