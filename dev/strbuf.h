@@ -161,6 +161,10 @@ StrBuf allc_strbuf_new(allc_allocator_t allocator, size_t capacity) {
       .capacity = capacity,
       .length = 0,
   };
+  // Initialize buffer to zero to ensure null termination
+  if (capacity > 0) {
+    self->buf[0] = '\0';
+  }
   return self;
 }
 
@@ -207,7 +211,7 @@ void allc_strbuf_set_fmt(StrBuf *self, String fmt, ...) {
   allc_strbuf_ensure_capacity(self, n + 1);
   vsprintf((*self)->buf, fmt, ap1);
   va_end(ap1);
-  (*self)->length = n - 1;
+  (*self)->length = n;
 }
 
 void allc_strbuf_set_cstr(StrBuf *self, String str) {
@@ -227,15 +231,33 @@ void allc_strbuf_append_cstr(StrBuf *self, String other) {
 }
 
 void allc_strbuf_insert_cstr(StrBuf *self, ssize_t pos, String str) {
-  size_t i, length = allc_cstr_length(str);
-  ssize_t length_signed = (ssize_t) length;
-  i = 0 <= pos && pos < length_signed ? (size_t) pos :
-      0 <= pos && length_signed <= pos ? length :
-      pos < 0 && -length_signed <= pos ? (size_t) (length_signed + pos) : 0; 
-  allc_strbuf_ensure_capacity(self, (*self)->length + length + 1);
-  allc_cstr_shift_right((*self)->buf + i, length);
-  memcpy((*self)->buf + i, str, length);
-  (*self)->length += length;
+  size_t str_length = allc_cstr_length(str);
+  size_t buffer_length = (*self)->length;
+  size_t insert_pos;
+  
+  // Calculate the actual insertion position
+  if (pos >= 0) {
+    insert_pos = (size_t)pos > buffer_length ? buffer_length : (size_t)pos;
+  } else {
+    ssize_t neg_offset = -pos;
+    insert_pos = (size_t)neg_offset > buffer_length ? 0 : buffer_length - (size_t)neg_offset;
+  }
+  
+  allc_strbuf_ensure_capacity(self, (*self)->length + str_length + 1);
+  
+  // Shift existing content to the right to make room for the new string
+  if (insert_pos < buffer_length) {
+    memmove((*self)->buf + insert_pos + str_length, 
+            (*self)->buf + insert_pos, 
+            buffer_length - insert_pos + 1); // +1 for null terminator
+  }
+  
+  // Insert the new string
+  memcpy((*self)->buf + insert_pos, str, str_length);
+  (*self)->length += str_length;
+  
+  // Ensure null termination
+  (*self)->buf[(*self)->length] = '\0';
 }
 
 void allc_strbuf_strip_blank(StrBuf *self) {
@@ -264,8 +286,26 @@ struct allc_strbuf_pair_s allc_strbuf_split_at(StrBuf self, size_t i) {
 
 struct allc_strbuf_pair_s 
 allc_strbuf_split_on_char(StrBuf self, ssize_t n, const char chr) {
-  ssize_t i = allc_cstr_find_char(self->buf, n, chr);
-  return allc_strbuf_split_at(self, i);
+  size_t i = allc_cstr_find_char(self->buf, n, chr);
+  struct allc_strbuf_pair_s result;
+  
+  if (i < allc_cstr_length(self->buf)) {
+    // Character found, split excluding the delimiter
+    result.left = allc_strbuf_new_from_cstr(self->allocator, "");
+    allc_strbuf_ensure_capacity(&result.left, i + 1);
+    memcpy(result.left->buf, self->buf, i);
+    result.left->buf[i] = '\0';
+    result.left->length = i;
+    
+    result.right = allc_strbuf_new_from_cstr(self->allocator, self->buf + i + 1);
+  } else {
+    // Character not found, left gets the whole string, right is empty
+    result.left = allc_strbuf_new_from_cstr(self->allocator, self->buf);
+    result.right = allc_strbuf_new_from_cstr(self->allocator, "");
+  }
+  
+  allc_strbuf_delete(self);
+  return result;
 }
 
 // Path - Boolean Statements {{{2

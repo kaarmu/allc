@@ -1,3 +1,5 @@
+#define ALLC_IMPL
+
 #include "../dev/strbuf.h"
 #include "../dev/macro.h"
 
@@ -79,7 +81,13 @@ void test__allc_strbuf_clear(allc_allocator_t allocator) {
     ALLC_TEST_ANY("0", "%zu", buffer->length);
     ALLC_TEST_ANY("\0", "%c", buffer->buf[0]);  // First character should be null terminator
 
+    // Test: New empty buffer should be null-terminated
+    StrBuf empty_buffer = allc_strbuf_new(allocator, 10);
+    ALLC_TEST_ANY("0", "%zu", empty_buffer->length);
+    ALLC_TEST_ANY("\0", "%c", empty_buffer->buf[0]);  // Should be null-terminated
+    
     allc_strbuf_delete(buffer);
+    allc_strbuf_delete(empty_buffer);
 }
 
 void test__allc_strbuf_set_fmt(allc_allocator_t allocator) {
@@ -90,14 +98,17 @@ void test__allc_strbuf_set_fmt(allc_allocator_t allocator) {
     // Test: Basic formatting
     allc_strbuf_set_fmt(&buffer, "Hello %s!", "World");
     ALLC_TEST_ANY("Hello World!", "%s", buffer->buf);
+    ALLC_TEST_ANY("12", "%zu", buffer->length);
 
     // Test: Formatting with numbers
     allc_strbuf_set_fmt(&buffer, "Number: %d", 42);
     ALLC_TEST_ANY("Number: 42", "%s", buffer->buf);
+    ALLC_TEST_ANY("10", "%zu", buffer->length);
 
     // Test: Formatting with multiple placeholders
     allc_strbuf_set_fmt(&buffer, "%s %d %c", "Test", 123, 'A');
     ALLC_TEST_ANY("Test 123 A", "%s", buffer->buf);
+    ALLC_TEST_ANY("10", "%zu", buffer->length);
 
     allc_strbuf_delete(buffer);
 }
@@ -154,15 +165,15 @@ void test__allc_strbuf_insert_cstr(allc_allocator_t allocator) {
 
     // Test: Insert using a negative position (counted from the back)
     allc_strbuf_insert_cstr(&buffer, -6, " there");
-    ALLC_TEST_ANY("Start: Hello there World!", "%s", buffer->buf);
+    ALLC_TEST_ANY("Start: Hello  thereWorld!", "%s", buffer->buf);
 
     // Test: Insert with position greater than buffer length (should clamp and append to the end)
     allc_strbuf_insert_cstr(&buffer, 100, " [End]");
-    ALLC_TEST_ANY("Start: Hello there World! [End]", "%s", buffer->buf);
+    ALLC_TEST_ANY("Start: Hello  thereWorld! [End]", "%s", buffer->buf);
 
     // Test: Insert with negative position beyond buffer start (should clamp and insert at the beginning)
     allc_strbuf_insert_cstr(&buffer, -100, "[Start] ");
-    ALLC_TEST_ANY("[Start] Start: Hello there World! [End]", "%s", buffer->buf);
+    ALLC_TEST_ANY("[Start] Start: Hello  thereWorld! [End]", "%s", buffer->buf);
 
     allc_strbuf_delete(buffer);
 }
