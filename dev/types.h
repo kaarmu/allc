@@ -202,6 +202,12 @@ allc_u32_t allc_types_count(void);
 // Implementation {{{1
 // ===================
 
+#ifndef ALLC_TYPES_IMPL__GUARD
+#define ALLC_TYPES_IMPL__GUARD
+#else
+#undef ALLC_TYPES_IMPL
+#endif
+
 #ifdef ALLC_TYPES_IMPL
 
 // Type information lookup table
