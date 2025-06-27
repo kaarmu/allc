@@ -26,6 +26,54 @@
 - **Single File Distribution**: Each module is self-contained in a single header file
 - **Optional Implementation**: Users control when implementation is compiled
 
+#### Implementation Guard Pattern
+The project uses a dual-guard system to prevent duplicate implementations:
+
+```c
+// Header guard for interface
+#ifndef ALLC_MODULE__GUARD
+#define ALLC_MODULE__GUARD
+// ... interface declarations ...
+#endif
+
+// Implementation guard prevents multiple inclusions of implementation
+#ifndef ALLC_MODULE_IMPL__GUARD
+#define ALLC_MODULE_IMPL__GUARD
+#else
+#undef ALLC_MODULE_IMPL  // Disable implementation if already included
+#endif
+
+#ifdef ALLC_MODULE_IMPL
+// ... implementation code ...
+#endif
+```
+
+This pattern ensures that:
+- Interface can be included multiple times safely
+- Implementation is only compiled once even if header is included multiple times
+- Users can control implementation inclusion per module
+
+#### Code Organization with Vim Fold Markers
+All header files use vim fold markers (`{{{` and `}}}`) with hierarchical numbering for code organization:
+
+```c
+// Major sections use {{{1
+// Includes {{{1
+// Macros {{{1
+// Type Definitions {{{1
+
+// Subsections use {{{2
+// Object - Constructors {{{2
+// Object - Modifiers {{{2
+// Object - Inspectors {{{2
+```
+
+This provides:
+- Clear visual separation of code sections
+- Hierarchical organization for complex modules
+- Editor-agnostic folding support (vim fold markers work in many editors)
+- Consistent structure across all modules
+
 ### 2. Consistent API Design
 - **Naming Convention**: All public functions prefixed with `allc_<module>_`
 - **Error Handling**: Consistent error reporting through return values and logging
