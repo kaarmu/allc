@@ -32,9 +32,10 @@ strbuf_deps = $(call add,allocator cstr)
 list_deps = $(call add,allocator)
 array_deps = $(call add,allocator)
 hashmap_deps = $(call add,allocator cstr)
+process_deps = $(call add,types allocator)
 path_deps = strbuf
 
-allc_deps = $(call add,types allocator cstr strbuf list array path)
+allc_deps = $(call add,types allocator cstr strbuf list array path hashmap process)
 
 define PROGRAM_build =
 build_$1: ${OBJ_DIR}/$1.o build_deps_for_$1
