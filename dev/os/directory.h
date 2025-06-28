@@ -1,56 +1,74 @@
-/*
- *  Directory Handling.
+/**
+ * Directory Handling
  *
- *  Description
- *  ===========
- *  This module provides an abstraction layer for directory management using 
- *  platform-specific directory functions. It encapsulates operations such as 
- *  opening, reading, and closing directories in a more structured interface.
+ * Description
+ * ===========
+ * This module provides an abstraction layer for directory management using 
+ * platform-specific directory functions. It encapsulates operations such as 
+ * opening, reading, and closing directories in a structured interface.
  *
- *  Options
- *  =======
- *  Compilation options that control the behavior of the directory module.
+ * Features:
+ * - Cross-platform directory operations
+ * - Built on allocator abstraction for memory management
+ * - Error handling with detailed status codes
+ * - Directory iteration support
+ * - POSIX-compliant directory operations
  *
- *  Content
- *  =======
- *  Types and subroutines provided by this module for directory handling.
+ * Usage Example:
+ * ==============
  *
- *  Directory Object
- *  ----------------
- *  [x] allc_directory_t
- *  [x] allc_directory_new
- *  [x] allc_directory_new_opened
- *  [x] allc_directory_delete
+ * ```c
+ * #define ALLC_IMPL
+ * #include "os/directory.h"
+ * 
+ * int main() {
+ *     allc_allocator_t allocator = allc_allocator_system();
+ *     
+ *     // Open a directory for reading
+ *     allc_directory_t dir = allc_directory_new_opened(allocator, "/tmp");
+ *     if (allc_directory_get_status(dir) == ALLC_DIRECTORY_SUCCESS) {
+ *         // Read directory entries
+ *         while (allc_directory_read(dir) == ALLC_DIRECTORY_SUCCESS) {
+ *             printf("Entry: %s\n", allc_directory_get_entry_name(dir));
+ *         }
+ *         
+ *         // Cleanup
+ *         allc_directory_delete(dir);
+ *     }
+ *     
+ *     return 0;
+ * }
+ * ```
  *
- *  Directory Object Accessors
- *  --------------------------
- *  [x] allc_directory_get_status
+ * Options
+ * =======
  *
- *  Directory Object Modifiers
- *  --------------------------
- *  [x] allc_directory_open
- *  [x] allc_directory_close
- *  [x] allc_directory_read
- *  [x] allc_directory_rewind
+ * ALLC_IMPL - Include implementation code
+ * ALLC_DIRECTORY_IMPL - Include only directory implementation
+ *
+ * Authored by Kaj Munhoz Arfvidsson, 2023.
+ * Edited with LLMs.
  */
 
-// Module Dependencies {{{1
-// ========================
+#ifndef ALLC_DIRECTORY__GUARD
+#define ALLC_DIRECTORY__GUARD
 
-#define ALLC_IMPL // During development
+// Includes {{{1
+// =============
 
-#ifdef ALLC_IMPL
-#   define ALLC_DIRECTORY_IMPL
-#endif
-
+#include "../types.h"
 #include "../allocator.h"
-#include "../path.h"
+#include "../cstr.h"
 
-#include <dirent.h> // for opendir, readdir, closedir
+#include <dirent.h>
 #include <errno.h>
 
 // Macros {{{1
 // ===========
+
+#ifdef ALLC_IMPL
+#define ALLC_DIRECTORY_IMPL
+#endif
 
 #define returnd(value)  \
     do {                \
@@ -58,187 +76,264 @@
         goto defer;     \
     } while (0)
 
-// Declarations {{{1
-// =================
-
-#ifndef ALLC_DIRECTORY__GUARD
-#define ALLC_DIRECTORY__GUARD
-
-// Directory {{{2
-// --------------
+// Directory {{{1
+// ==============
 
 typedef enum allc_directory_status_e {
     ALLC_DIRECTORY_SUCCESS,
     ALLC_DIRECTORY_END_OF_DIRECTORY,
+    ALLC_DIRECTORY_ERROR_NULL_POINTER,
     ALLC_DIRECTORY_ERROR_BAD_STATE,
     ALLC_DIRECTORY_ERROR_OPEN_FAILED,
     ALLC_DIRECTORY_ERROR_CLOSE_FAILED,
     ALLC_DIRECTORY_ERROR_READ_FAILED,
+    ALLC_DIRECTORY_ERROR_ALLOCATION_FAILED,
 } allc_directory_status_e;
 
-#ifdef ALLC_DIRECTORY_IMPL
 typedef struct allc_directory_s {
     allc_allocator_t allocator;
-    Path path;
-    bool open;
+    allc_string_t path;
+    allc_bool_t is_open;
     allc_directory_status_e status;
     DIR *handle;
     struct dirent *entry;
 } *allc_directory_t;
-#else
-typedef void *allc_directory_t;
-#endif // ALLC_DIRECTORY_IMPL
 
-allc_directory_t allc_directory_new(allc_allocator_t allocator, String path);
-allc_directory_t allc_directory_new_opened(allc_allocator_t allocator, String path);
+// Directory - Constructing and Destructing {{{2
+// ----------------------------------------------
+
+/* Create a new directory object with specified path */
+allc_directory_t allc_directory_new(allc_allocator_t allocator, allc_string_t path);
+
+/* Create and immediately open a directory */
+allc_directory_t allc_directory_new_opened(allc_allocator_t allocator, allc_string_t path);
+
+/* Delete the directory object and free resources */
 void allc_directory_delete(allc_directory_t self);
 
-// Directory - Object Accessors {{{3
+// Directory - Object Accessors {{{2
+// ---------------------------------
 
-allc_directory_status_e allc_directory_get_status(allc_directory_t *self);
+/* Get the current status of the directory object */
+allc_directory_status_e allc_directory_get_status(allc_directory_t self);
 
-// Directory - Object Modifiers {{{3
+/* Get the directory path */
+allc_string_t allc_directory_get_path(allc_directory_t self);
 
-allc_directory_status_e allc_directory_open(allc_directory_t *self);
-allc_directory_status_e allc_directory_close(allc_directory_t *self);
-allc_directory_status_e allc_directory_read(allc_directory_t *self);
-allc_directory_status_e allc_directory_rewind(allc_directory_t *self);
+/* Check if directory is currently open */
+allc_bool_t allc_directory_is_open(allc_directory_t self);
+
+/* Get current entry name (after successful read) */
+allc_string_t allc_directory_get_entry_name(allc_directory_t self);
+
+/* Get current entry type (after successful read) */
+unsigned char allc_directory_get_entry_type(allc_directory_t self);
+
+// Directory - Object Modifiers {{{2
+// ---------------------------------
+
+/* Open the directory for reading */
+allc_directory_status_e allc_directory_open(allc_directory_t self);
+
+/* Close the directory */
+allc_directory_status_e allc_directory_close(allc_directory_t self);
+
+/* Read next directory entry */
+allc_directory_status_e allc_directory_read(allc_directory_t self);
+
+/* Rewind directory to beginning */
+allc_directory_status_e allc_directory_rewind(allc_directory_t self);
+
+// Utility Functions {{{2
+// ----------------------
+
+/* Convert status enum to string */
+allc_string_t allc_directory_status_string(allc_directory_status_e status);
 
 #endif // ALLC_DIRECTORY__GUARD
-// }}}1
 
 /****************************************************************************/
 
-// Defintions {{{1
-// ===============
+// Implementation {{{1
+// ===================
 
 #ifndef ALLC_DIRECTORY_IMPL__GUARD
-#   define ALLC_DIRECTORY_IMPL__GUARD
+#define ALLC_DIRECTORY_IMPL__GUARD
 #else
-#   undef ALLC_DIRECTORY_IMPL
+#undef ALLC_DIRECTORY_IMPL
 #endif
 
 #ifdef ALLC_DIRECTORY_IMPL
 
-// Directory {{{2
-// --------------
+#include <string.h>
 
-allc_directory_t allc_directory_new(allc_allocator_t allocator, String path)
-{
-    allc_directory_t self = allocator->alloc(sizeof(struct allc_directory_s));
+// Directory - Constructing and Destructing {{{2
+// ----------------------------------------------
+
+allc_directory_t allc_directory_new(allc_allocator_t allocator, allc_string_t path) {
+    if (!allocator || !path) return NULL;
+    
+    allc_directory_t self = allc_allocator_alloc(allocator, sizeof(struct allc_directory_s));
+    if (!self) return NULL;
+    
+    // Allocate memory for path copy
+    allc_size_t path_len = allc_cstr_length(path);
+    char *path_copy = allc_allocator_alloc(allocator, path_len + 1);
+    if (!path_copy) {
+        allc_allocator_free(allocator, self);
+        return NULL;
+    }
+    allc_cstr_copy(path, path_copy);
+    
     *self = (struct allc_directory_s){
         .allocator = allocator,
-        .path = allc_strbuf_new_from_cstr(allocator, path),
+        .path = path_copy,
+        .is_open = false,
+        .status = ALLC_DIRECTORY_SUCCESS,
+        .handle = NULL,
+        .entry = NULL
     };
+    
     return self;
 }
 
-allc_directory_t allc_directory_new_opened(allc_allocator_t allocator, String path)
-{
+allc_directory_t allc_directory_new_opened(allc_allocator_t allocator, allc_string_t path) {
     allc_directory_t self = allc_directory_new(allocator, path);
-    allc_directory_open(&self);
+    if (!self) return NULL;
+    
+    allc_directory_status_e status = allc_directory_open(self);
+    if (status != ALLC_DIRECTORY_SUCCESS) {
+        allc_directory_delete(self);
+        return NULL;
+    }
+    
     return self;
 }
 
-void allc_directory_delete(allc_directory_t self)
-{
-    if (self->open) {
-        allc_directory_close(&self);
+void allc_directory_delete(allc_directory_t self) {
+    if (!self) return;
+    
+    if (self->is_open) {
+        allc_directory_close(self);
     }
-    allc_path_delete(self->path);
-    self->allocator->free(self);
+    
+    if (self->path) {
+        allc_allocator_free(self->allocator, (void*)self->path);
+    }
+    allc_allocator_free(self->allocator, self);
 }
 
-// Directory - Object Accessors {{{3
+// Directory - Object Accessors {{{2
+// ---------------------------------
 
-allc_directory_status_e allc_directory_get_status(allc_directory_t *self)
-{
-    return (*self)->status;
+allc_directory_status_e allc_directory_get_status(allc_directory_t self) {
+    return self ? self->status : ALLC_DIRECTORY_ERROR_NULL_POINTER;
 }
 
-// Directory - Object Modifiers {{{3
+allc_string_t allc_directory_get_path(allc_directory_t self) {
+    return self ? self->path : NULL;
+}
 
-allc_directory_status_e allc_directory_open(allc_directory_t *self)
-{
-    allc_directory_t self_ = *self;
+allc_bool_t allc_directory_is_open(allc_directory_t self) {
+    return self ? self->is_open : false;
+}
+
+allc_string_t allc_directory_get_entry_name(allc_directory_t self) {
+    return (self && self->entry) ? self->entry->d_name : NULL;
+}
+
+unsigned char allc_directory_get_entry_type(allc_directory_t self) {
+    return (self && self->entry) ? self->entry->d_type : 0;
+}
+
+// Directory - Object Modifiers {{{2
+// ---------------------------------
+
+allc_directory_status_e allc_directory_open(allc_directory_t self) {
+    if (!self) return ALLC_DIRECTORY_ERROR_NULL_POINTER;
+    if (self->is_open) return ALLC_DIRECTORY_ERROR_BAD_STATE;
+    
     allc_directory_status_e result = ALLC_DIRECTORY_SUCCESS;
-
-    if (self_->status || self_->open) {
-        returnd(ALLC_DIRECTORY_ERROR_BAD_STATE);
-    }
-
-    self_->handle = opendir(allc_path_to_strbuf(self_->path)->buf);
-    if (self_->handle == NULL) {
+    
+    self->handle = opendir(self->path);
+    if (self->handle == NULL) {
         returnd(ALLC_DIRECTORY_ERROR_OPEN_FAILED);
     }
-
-    self_->open = true;
-
-defer: 
-    self_->status = result;
-    return self_->status;
-}
-
-allc_directory_status_e allc_directory_close(allc_directory_t *self)
-{
-    allc_directory_t self_ = *self;
-    allc_directory_status_e result = ALLC_DIRECTORY_SUCCESS;
-
-    if (self_->status || !self_->open) {
-        returnd(ALLC_DIRECTORY_ERROR_BAD_STATE);
-    }
-
-    if (closedir(self_->handle) == -1) {
-        returnd(ALLC_DIRECTORY_ERROR_CLOSE_FAILED);
-    }
-
-    self_->open = false;
-    self_->handle = NULL;
+    
+    self->is_open = true;
+    self->entry = NULL;
 
 defer:
-    self_->status = result;
-    return self_->status;
+    self->status = result;
+    return result;
 }
 
-allc_directory_status_e allc_directory_read(allc_directory_t *self)
-{
-    allc_directory_t self_ = *self;
+allc_directory_status_e allc_directory_close(allc_directory_t self) {
+    if (!self) return ALLC_DIRECTORY_ERROR_NULL_POINTER;
+    if (!self->is_open) return ALLC_DIRECTORY_ERROR_BAD_STATE;
+    
     allc_directory_status_e result = ALLC_DIRECTORY_SUCCESS;
-
-    if (self_->status || !self_->open) {
-        returnd(ALLC_DIRECTORY_ERROR_BAD_STATE);
+    
+    if (closedir(self->handle) == -1) {
+        returnd(ALLC_DIRECTORY_ERROR_CLOSE_FAILED);
     }
+    
+    self->is_open = false;
+    self->handle = NULL;
+    self->entry = NULL;
 
+defer:
+    self->status = result;
+    return result;
+}
+
+allc_directory_status_e allc_directory_read(allc_directory_t self) {
+    if (!self) return ALLC_DIRECTORY_ERROR_NULL_POINTER;
+    if (!self->is_open) return ALLC_DIRECTORY_ERROR_BAD_STATE;
+    
+    allc_directory_status_e result = ALLC_DIRECTORY_SUCCESS;
+    
     errno = 0;
-    self_->entry = readdir(self_->handle);
-    if (self_->entry == NULL && errno != 0) {  // errno is set on an error
+    self->entry = readdir(self->handle);
+    if (self->entry == NULL && errno != 0) {
         returnd(ALLC_DIRECTORY_ERROR_READ_FAILED);
-    } else if (self_->entry == NULL) {  // errno is not set on end of directory
+    } else if (self->entry == NULL) {
         returnd(ALLC_DIRECTORY_END_OF_DIRECTORY);
     }
 
 defer:
-    self_->status = result;
-    return self_->status;
+    self->status = result;
+    return result;
 }
 
-allc_directory_status_e allc_directory_rewind(allc_directory_t *self)
-{
-    allc_directory_t self_ = *self;
-    allc_directory_status_e result = ALLC_DIRECTORY_SUCCESS;
+allc_directory_status_e allc_directory_rewind(allc_directory_t self) {
+    if (!self) return ALLC_DIRECTORY_ERROR_NULL_POINTER;
+    if (!self->is_open) return ALLC_DIRECTORY_ERROR_BAD_STATE;
+    
+    rewinddir(self->handle);
+    self->entry = NULL;
+    
+    self->status = ALLC_DIRECTORY_SUCCESS;
+    return ALLC_DIRECTORY_SUCCESS;
+}
 
-    if (self_->status || !self_->open) {
-        returnd(ALLC_DIRECTORY_ERROR_BAD_STATE);
+// Utility Functions {{{2
+// ----------------------
+
+allc_string_t allc_directory_status_string(allc_directory_status_e status) {
+    switch (status) {
+        case ALLC_DIRECTORY_SUCCESS: return "success";
+        case ALLC_DIRECTORY_END_OF_DIRECTORY: return "end of directory";
+        case ALLC_DIRECTORY_ERROR_NULL_POINTER: return "null pointer";
+        case ALLC_DIRECTORY_ERROR_BAD_STATE: return "bad state";
+        case ALLC_DIRECTORY_ERROR_OPEN_FAILED: return "open failed";
+        case ALLC_DIRECTORY_ERROR_CLOSE_FAILED: return "close failed";
+        case ALLC_DIRECTORY_ERROR_READ_FAILED: return "read failed";
+        case ALLC_DIRECTORY_ERROR_ALLOCATION_FAILED: return "allocation failed";
+        default: return "unknown error";
     }
-
-    rewinddir(self_->handle);
-
-defer:
-    self_->status = result;
-    return self_->status;
 }
 
 #endif // ALLC_DIRECTORY_IMPL
-// }}}1
 
 // vim: ai et ts=4 sw=0 fdl=99 fdm=marker

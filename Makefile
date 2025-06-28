@@ -33,6 +33,10 @@ list_deps = $(call add,allocator)
 array_deps = $(call add,allocator)
 hashmap_deps = $(call add,allocator cstr)
 process_deps = $(call add,types allocator)
+file_deps = $(call add,types allocator cstr)
+directory_deps = $(call add,types allocator cstr)
+file_deps = $(call add,types allocator path)
+directory_deps = $(call add,types allocator path)
 path_deps = strbuf
 
 allc_deps = $(call add,types allocator cstr strbuf list array path hashmap process)

@@ -325,8 +325,8 @@ allc/
 - [ ] Basic cryptographic functions (`crypto.h`)
 
 #### Phase 4: System Integration 🔄
-- [ ] File system operations (`os/file.h`, `os/directory.h`)
-- [ ] Process management (`os/process.h`)
+- [x] File system operations (`os/file.h`, `os/directory.h`)
+- [x] Process management (`os/process.h`)
 - [ ] Network operations (`os/network.h`)
 - [ ] Environment handling (`os/environ.h`)
 - [ ] Build system utilities (`builder.h`)
